@@ -1,0 +1,4 @@
+[console_scripts]
+simple_publisher = agv_py_examples.simple_publisher:main
+simple_subscriber = agv_py_examples.simple_subscriber:main
+

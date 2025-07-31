@@ -1,0 +1,6 @@
+Invoking command in '/home/ksr/agv_ws/build/agv_description': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/ksr/agv_ws/src/agv_description -DCMAKE_INSTALL_PREFIX=/home/ksr/agv_ws/install/agv_description
+Invoked command in '/home/ksr/agv_ws/build/agv_description' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/ksr/agv_ws/src/agv_description -DCMAKE_INSTALL_PREFIX=/home/ksr/agv_ws/install/agv_description
+Invoking command in '/home/ksr/agv_ws/build/agv_description': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/ksr/agv_ws/build/agv_description -- -j12 -l12
+Invoked command in '/home/ksr/agv_ws/build/agv_description' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/ksr/agv_ws/build/agv_description -- -j12 -l12
+Invoking command in '/home/ksr/agv_ws/build/agv_description': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/ksr/agv_ws/build/agv_description
+Invoked command in '/home/ksr/agv_ws/build/agv_description' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/ksr/agv_ws/build/agv_description

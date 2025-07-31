@@ -1,0 +1,4 @@
+source;share/agv_cpp_examples/local_setup.bash
+source;share/agv_cpp_examples/local_setup.dsv
+source;share/agv_cpp_examples/local_setup.sh
+source;share/agv_cpp_examples/local_setup.zsh

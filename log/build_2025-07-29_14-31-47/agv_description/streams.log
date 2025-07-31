@@ -1,0 +1,37 @@
+[0.011s] Invoking command in '/home/ksr/agv_ws/build/agv_description': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/ksr/agv_ws/build/agv_description -- -j12 -l12
+[0.036s] -- Found ament_cmake: 1.3.12 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.125s] -- Found ament_lint_auto: 0.12.14 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[0.172s] -- Added test 'lint_cmake' to check CMake code style
+[0.174s] -- Added test 'xmllint' to check XML markup files
+[0.175s] -- Configuring done
+[0.178s] -- Generating done
+[0.180s] -- Build files have been written to: /home/ksr/agv_ws/build/agv_description
+[0.191s] Invoked command in '/home/ksr/agv_ws/build/agv_description' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/ksr/agv_ws/build/agv_description -- -j12 -l12
+[0.192s] Invoking command in '/home/ksr/agv_ws/build/agv_description': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/ksr/agv_ws/build/agv_description
+[0.196s] -- Install configuration: ""
+[0.196s] -- Installing: /home/ksr/agv_ws/install/agv_description/share/agv_description/meshes
+[0.196s] -- Installing: /home/ksr/agv_ws/install/agv_description/share/agv_description/meshes/imu_link.stl
+[0.197s] -- Installing: /home/ksr/agv_ws/install/agv_description/share/agv_description/meshes/caster_link.stl
+[0.198s] -- Installing: /home/ksr/agv_ws/install/agv_description/share/agv_description/meshes/base_link.stl
+[0.256s] -- Installing: /home/ksr/agv_ws/install/agv_description/share/agv_description/meshes/wheel_right_link.stl
+[0.256s] -- Installing: /home/ksr/agv_ws/install/agv_description/share/agv_description/meshes/camera_link.stl
+[0.258s] -- Installing: /home/ksr/agv_ws/install/agv_description/share/agv_description/meshes/lidar_link.stl
+[0.258s] -- Installing: /home/ksr/agv_ws/install/agv_description/share/agv_description/meshes/wheel_left_link.stl
+[0.258s] -- Installing: /home/ksr/agv_ws/install/agv_description/share/agv_description/urdf
+[0.258s] -- Installing: /home/ksr/agv_ws/install/agv_description/share/agv_description/urdf/agv.urdf.xacro
+[0.258s] -- Up-to-date: /home/ksr/agv_ws/install/agv_description/share/ament_index/resource_index/package_run_dependencies/agv_description
+[0.258s] -- Up-to-date: /home/ksr/agv_ws/install/agv_description/share/ament_index/resource_index/parent_prefix_path/agv_description
+[0.258s] -- Up-to-date: /home/ksr/agv_ws/install/agv_description/share/agv_description/environment/ament_prefix_path.sh
+[0.258s] -- Installing: /home/ksr/agv_ws/install/agv_description/share/agv_description/environment/ament_prefix_path.dsv
+[0.258s] -- Up-to-date: /home/ksr/agv_ws/install/agv_description/share/agv_description/environment/path.sh
+[0.258s] -- Installing: /home/ksr/agv_ws/install/agv_description/share/agv_description/environment/path.dsv
+[0.259s] -- Up-to-date: /home/ksr/agv_ws/install/agv_description/share/agv_description/local_setup.bash
+[0.259s] -- Up-to-date: /home/ksr/agv_ws/install/agv_description/share/agv_description/local_setup.sh
+[0.259s] -- Up-to-date: /home/ksr/agv_ws/install/agv_description/share/agv_description/local_setup.zsh
+[0.259s] -- Installing: /home/ksr/agv_ws/install/agv_description/share/agv_description/local_setup.dsv
+[0.259s] -- Installing: /home/ksr/agv_ws/install/agv_description/share/agv_description/package.dsv
+[0.259s] -- Up-to-date: /home/ksr/agv_ws/install/agv_description/share/ament_index/resource_index/packages/agv_description
+[0.259s] -- Up-to-date: /home/ksr/agv_ws/install/agv_description/share/agv_description/cmake/agv_descriptionConfig.cmake
+[0.259s] -- Up-to-date: /home/ksr/agv_ws/install/agv_description/share/agv_description/cmake/agv_descriptionConfig-version.cmake
+[0.259s] -- Up-to-date: /home/ksr/agv_ws/install/agv_description/share/agv_description/package.xml
+[0.260s] Invoked command in '/home/ksr/agv_ws/build/agv_description' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/ksr/agv_ws/build/agv_description

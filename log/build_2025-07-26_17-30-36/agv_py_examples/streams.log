@@ -1,0 +1,28 @@
+[0.422s] Invoking command in '/home/ksr/agv_ws/src/agv_py_examples': PYTHONPATH=/home/ksr/agv_ws/build/agv_py_examples/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ksr/agv_ws/install/agv_py_examples/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/agv_py_examples build --build-base /home/ksr/agv_ws/build/agv_py_examples/build install --record /home/ksr/agv_ws/build/agv_py_examples/install.log --single-version-externally-managed install_data
+[0.558s] running egg_info
+[0.559s] writing ../../build/agv_py_examples/agv_py_examples.egg-info/PKG-INFO
+[0.559s] writing dependency_links to ../../build/agv_py_examples/agv_py_examples.egg-info/dependency_links.txt
+[0.559s] writing entry points to ../../build/agv_py_examples/agv_py_examples.egg-info/entry_points.txt
+[0.559s] writing requirements to ../../build/agv_py_examples/agv_py_examples.egg-info/requires.txt
+[0.559s] writing top-level names to ../../build/agv_py_examples/agv_py_examples.egg-info/top_level.txt
+[0.560s] reading manifest file '../../build/agv_py_examples/agv_py_examples.egg-info/SOURCES.txt'
+[0.561s] writing manifest file '../../build/agv_py_examples/agv_py_examples.egg-info/SOURCES.txt'
+[0.561s] running build
+[0.561s] running build_py
+[0.561s] copying agv_py_examples/simple_publisher.py -> /home/ksr/agv_ws/build/agv_py_examples/build/lib/agv_py_examples
+[0.561s] copying agv_py_examples/simple_subscriber.py -> /home/ksr/agv_ws/build/agv_py_examples/build/lib/agv_py_examples
+[0.561s] running install
+[0.561s] running install_lib
+[0.562s] copying /home/ksr/agv_ws/build/agv_py_examples/build/lib/agv_py_examples/simple_publisher.py -> /home/ksr/agv_ws/install/agv_py_examples/lib/python3.10/site-packages/agv_py_examples
+[0.562s] copying /home/ksr/agv_ws/build/agv_py_examples/build/lib/agv_py_examples/simple_subscriber.py -> /home/ksr/agv_ws/install/agv_py_examples/lib/python3.10/site-packages/agv_py_examples
+[0.562s] byte-compiling /home/ksr/agv_ws/install/agv_py_examples/lib/python3.10/site-packages/agv_py_examples/simple_publisher.py to simple_publisher.cpython-310.pyc
+[0.562s] byte-compiling /home/ksr/agv_ws/install/agv_py_examples/lib/python3.10/site-packages/agv_py_examples/simple_subscriber.py to simple_subscriber.cpython-310.pyc
+[0.562s] running install_data
+[0.563s] copying package.xml -> /home/ksr/agv_ws/install/agv_py_examples/share/agv_py_examples
+[0.563s] running install_egg_info
+[0.564s] removing '/home/ksr/agv_ws/install/agv_py_examples/lib/python3.10/site-packages/agv_py_examples-0.0.0-py3.10.egg-info' (and everything under it)
+[0.564s] Copying ../../build/agv_py_examples/agv_py_examples.egg-info to /home/ksr/agv_ws/install/agv_py_examples/lib/python3.10/site-packages/agv_py_examples-0.0.0-py3.10.egg-info
+[0.565s] running install_scripts
+[0.577s] Installing simple_publisher = agv_py_examples.simple_publisher:mainsimple_subscriber script to /home/ksr/agv_ws/install/agv_py_examples/lib/agv_py_examples
+[0.577s] writing list of installed files to '/home/ksr/agv_ws/build/agv_py_examples/install.log'
+[0.591s] Invoked command in '/home/ksr/agv_ws/src/agv_py_examples' returned '0': PYTHONPATH=/home/ksr/agv_ws/build/agv_py_examples/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ksr/agv_ws/install/agv_py_examples/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/agv_py_examples build --build-base /home/ksr/agv_ws/build/agv_py_examples/build install --record /home/ksr/agv_ws/build/agv_py_examples/install.log --single-version-externally-managed install_data
