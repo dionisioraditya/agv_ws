@@ -1,0 +1,7 @@
+# Ignore Visual Studio Code specific files
+.vscode/
+
+# Ignore ROS 2 build directories
+build/
+install/
+log/
