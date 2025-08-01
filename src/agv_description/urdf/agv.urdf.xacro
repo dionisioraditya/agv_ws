@@ -17,7 +17,7 @@
     </joint>
     <link name="wheel_right_link">
         <visual>
-            <origin rpy="1.57 0.0 -1.57" xyz="-1.56 1.3 0.0"/>
+            <origin rpy="1.570796 0.0 0.0" xyz="0.0 0.0 0.0"/>
             <geometry>
                 <mesh filename="package://agv_description/meshes/wheel_right_link.stl" scale="0.001 0.001 0.001"/>
             </geometry>
@@ -28,12 +28,12 @@
         <parent link="base_link"/>
         <child link="wheel_right_link"/>
         <axis xyz="0.0 1.0 0.0"/>
-        <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.07 0.0"/>
+        <origin rpy="0.0 0.0 -1.570796" xyz="-1.55 1.22 0.0"/>
     </joint>
     <link name="wheel_left_link">
         <visual>
-            
-            <origin rpy="-1.57 0.0 1.57" xyz="1.8 1.3 0.0"/>
+            <!-- -1.57 0.0 1.57  1.8 1.3 0.0-->
+            <origin rpy="1.570796 0.0 0.0" xyz="0.0 0.0 0.0"/>
             <geometry>
                 <mesh filename="package://agv_description/meshes/wheel_right_link.stl" scale="0.001 0.001 0.001"/>
             </geometry>
@@ -43,6 +43,22 @@
         <parent link="base_link"/>
         <child link="wheel_left_link"/>
         <axis xyz="0.0 1.0 0.0"/>
-        <origin rpy="0.0 0.0 0.0" xyz="0.0 0.07 0.0"/>
+        <origin rpy="0.0 0.0 1.570796" xyz="1.55 1.22 0.0"/>
+    </joint>
+
+    <link name="caster_link">
+        <visual>
+            
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="package://agv_description/meshes/caster_link.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </visual>
+    </link>
+    <joint name="caster_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="caster_link"/>
+        <axis xyz="0.0 0.0 0.0"/>
+        <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.95 -0.261"/>
     </joint>
 </robot>
