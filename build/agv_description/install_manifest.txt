@@ -6,6 +6,8 @@
 /home/ksr/agv_ws/install/agv_description/share/agv_description/meshes/lidar_link.stl
 /home/ksr/agv_ws/install/agv_description/share/agv_description/meshes/wheel_left_link.stl
 /home/ksr/agv_ws/install/agv_description/share/agv_description/urdf/agv.urdf.xacro
+/home/ksr/agv_ws/install/agv_description/share/agv_description/launch/display.launch.py
+/home/ksr/agv_ws/install/agv_description/share/agv_description/rviz/display.rviz
 /home/ksr/agv_ws/install/agv_description/share/ament_index/resource_index/package_run_dependencies/agv_description
 /home/ksr/agv_ws/install/agv_description/share/ament_index/resource_index/parent_prefix_path/agv_description
 /home/ksr/agv_ws/install/agv_description/share/agv_description/environment/ament_prefix_path.sh

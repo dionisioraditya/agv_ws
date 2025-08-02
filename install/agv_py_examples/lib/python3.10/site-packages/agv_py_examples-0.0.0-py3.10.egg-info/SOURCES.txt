@@ -9,6 +9,7 @@ setup.py
 ../../build/agv_py_examples/agv_py_examples.egg-info/top_level.txt
 ../../build/agv_py_examples/agv_py_examples.egg-info/zip-safe
 agv_py_examples/__init__.py
+agv_py_examples/simple_parameter.py
 agv_py_examples/simple_publisher.py
 agv_py_examples/simple_subscriber.py
 resource/agv_py_examples

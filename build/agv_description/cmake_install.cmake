@@ -46,6 +46,8 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/agv_description" TYPE DIRECTORY FILES
     "/home/ksr/agv_ws/src/agv_description/meshes"
     "/home/ksr/agv_ws/src/agv_description/urdf"
+    "/home/ksr/agv_ws/src/agv_description/launch"
+    "/home/ksr/agv_ws/src/agv_description/rviz"
     )
 endif()
 

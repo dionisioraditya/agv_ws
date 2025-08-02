@@ -21,7 +21,8 @@ setup(
     entry_points={
         'console_scripts': [
             'simple_publisher = agv_py_examples.simple_publisher:main',
-            'simple_subscriber = agv_py_examples.simple_subscriber:main'
+            'simple_subscriber = agv_py_examples.simple_subscriber:main',
+            'simple_parameter = agv_py_examples.simple_parameter:main',
         ],
     },
 )
