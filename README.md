@@ -3,7 +3,8 @@
 Repository ini berisikan source code dari robot AGV KSR yang ditulis dengan framework ROS2 Humble.
 
 # 🎯Goals
-Hasil akhirnya adalah highlevel language seperti ROS2 Python pada Komputer device bisa memproses data atau memberikan intruksi ke hardware melalui protocol komunikasi serial dengan format json. 
+Tujuan dari repository ini adalah dapat digunakan untuk simulasi robot AGV KSR, dan research and development path planning robot
+dengan framework ROS2 Humble
 
 # 💻Tech Stack
 - Framework: ROS2 Humble
