@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<robot name="agv" xmlns="http://www.ros.org/wiki/xacro">
+    <gazebo reference = "wheel_right_link">
+        <material>Gazebo/Black</material>
+        <mu1>100.0</mu1>
+        <mu2>100.0</mu2>
+        <friction>100.0</friction>
+        <rolling_friction>0.01</rolling_friction>
+        <restitution_coefficient>0.1</restitution_coefficient>
+
+    </gazebo>
+</robot>
