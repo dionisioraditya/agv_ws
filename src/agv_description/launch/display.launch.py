@@ -14,7 +14,7 @@ def generate_launch_description():
     )
     robot_description = ParameterValue(Command(['xacro ', LaunchConfiguration("model")]), value_type=str)
 
-    robot_state_publisher = Node(
+    robot_state_publisher_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
         parameters=[{'robot_description': robot_description}],
@@ -34,7 +34,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         model_arg,
-        robot_state_publisher,
+        robot_state_publisher_node,
         joint_state_publisher_gui,
         rviz_node
     ])
