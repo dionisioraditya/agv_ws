@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<robot name="agv" xmlns="http://www.ros.org/wiki/xacro">
+<robot name="agv" xmlns:xacro="http://ros.org/wiki/xacro">
     <gazebo reference = "wheel_right_link">
         <mu1>100000000000000.0</mu1>
         <mu2>100000000000000.0</mu2>
@@ -27,5 +27,19 @@
         <minDepth>0.001</minDepth>
         <maxVel>0.1</maxVel>
         
+    </gazebo>
+
+    <gazebo>
+        <xacro:if value="$(arg is_ignition)">
+            <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+                <parameters></parameters>
+            </plugin>
+        </xacro:if>
+
+        <xacro:unless value="$(arg is_ignition)">
+            <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+                <parameters></parameters>
+            </plugin>
+        </xacro:unless>
     </gazebo>
 </robot>
