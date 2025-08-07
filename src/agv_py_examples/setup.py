@@ -23,6 +23,7 @@ setup(
             'simple_publisher = agv_py_examples.simple_publisher:main',
             'simple_subscriber = agv_py_examples.simple_subscriber:main',
             'simple_parameter = agv_py_examples.simple_parameter:main',
+            'simple_turtlesim_kinematics = agv_py_examples.simple_turtlesim_kinematics:main',
         ],
     },
 )

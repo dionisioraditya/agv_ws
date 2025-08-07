@@ -12,6 +12,7 @@ agv_py_examples/__init__.py
 agv_py_examples/simple_parameter.py
 agv_py_examples/simple_publisher.py
 agv_py_examples/simple_subscriber.py
+agv_py_examples/simple_turtlesim_kinematics.py
 resource/agv_py_examples
 test/test_copyright.py
 test/test_flake8.py
