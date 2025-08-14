@@ -1,4 +1,4 @@
-#!usr/bin/env python3
+#!/usr/bin/env python3
 
 import rclpy
 from rclpy.node import Node
@@ -18,17 +18,14 @@ class SimpleController(Node):
         self.get_logger().info(f"wheel radius: {self.wheel_radius_} m\nwheel separation: {self.wheel_separation_} m")
         
         self.wheel_cmd_pub_ = self.create_publisher(Float64MultiArray, "simple_velocity_controller/commands", 10)
-        self.vel_sub_ = self.create_subscription(TwistStamped, "agv _controller/cmd_vel", self.velCallback, 10)
+        self.vel_sub_ = self.create_subscription(TwistStamped, "agv_controller/cmd_vel", self.velCallback, 10)
 
 
         self.speed_conversion_ = np.array([
-            self.wheel_radius_ / 2.0,
-            self.wheel_radius_ / 2.0,
-        ],
-        [
-            self.wheel_radius_ / self.wheel_separation_,
-            -self.wheel_radius_ / self.wheel_separation_,
+            [self.wheel_radius_ / 2.0, self.wheel_radius_ / 2.0],
+            [self.wheel_radius_ / self.wheel_separation_, -self.wheel_radius_ / self.wheel_separation_]
         ])
+    
         self.get_logger().info(f"Speed conversion matrix: {self.speed_conversion_}")
 
 
