@@ -7,7 +7,7 @@ from geometry_msgs.msg import TwistStamped
 import numpy as np
 
 class SimpleController(Node):
-    def __init__(self):
+    def __init__(self): 
         super().__init__('simple_controller')
         self.declare_parameter("wheel_radius", 0.033)
         self.declare_parameter("wheel_separation", 0.3)
@@ -35,7 +35,7 @@ class SimpleController(Node):
         wheel_speed = np.matmul(np.linalg.inv(self.speed_conversion_), robot_speed)
 
         wheel_speed_msg = Float64MultiArray()
-        wheel_speed_msg.data = [wheel_speed[1, 0], wheel_speed[0, 0]]
+        wheel_speed_msg.data = [wheel_speed[1], wheel_speed[0]]
         self.wheel_cmd_pub_.publish(wheel_speed_msg)
 
 def main(args=None):
