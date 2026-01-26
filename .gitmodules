@@ -1,0 +1,6 @@
+[submodule "src/OrbbecSDK_ROS2"]
+	path = src/OrbbecSDK_ROS2
+	url = https://github.com/orbbec/OrbbecSDK_ROS2.git
+[submodule "src/ros2_astra_camera"]
+	path = src/ros2_astra_camera
+	url = https://github.com/orbbec/ros2_astra_camera.git
