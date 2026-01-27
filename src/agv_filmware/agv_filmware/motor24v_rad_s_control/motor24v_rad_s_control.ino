@@ -1,15 +1,12 @@
 #include <Arduino.h>
 
-// ================= ENCODER CONFIG =================
-// Sesuaikan pin dengan wiring kamu
-
 // Encoder motor kiri
 const byte ENC_L_A = 2;   // interrupt
 const byte ENC_L_B = 4;
 
 // Encoder motor kanan
 const byte ENC_R_A = 20;   // interrupt default 3
-const byte ENC_R_B = 21;   // default 5
+const byte ENC_R_B = 21;   // default 5 (revisi dari PCB saya sebelumnya, sekarang udah ganti ke prototype PCB)
 
 volatile long posL = 0;   // count encoder kiri
 volatile long posR = 0;   // count encoder kanan
@@ -30,7 +27,7 @@ int motorDirL = +1;
 int motorDirR = +1;
 
 // ================= ENCODER & TIMING CONST =================
-const float COUNTS_PER_REV   = 16800.0;   // sesuaikan (PPR * 4 * rasio gearbox)
+const float COUNTS_PER_REV   = 16800.0;   // (PPR * 4 * rasio gearbox)
 const float SAMPLE_PERIOD    = 0.01;      // 10 ms
 const unsigned long SAMPLE_US = (unsigned long)(SAMPLE_PERIOD * 1e6);
 
@@ -161,11 +158,8 @@ void loop() {
   if (Serial.available()) {
     String line = Serial.readStringUntil('\n');
     line.trim();
-
-    // Pecah jadi token dipisah spasi
     int spaceIdx = line.indexOf(' ');
     if (spaceIdx == -1) {
-      // hanya satu perintah
       handleToken(line);
     } else {
       String t1 = line.substring(0, spaceIdx);
@@ -262,7 +256,6 @@ void loop() {
     float wR_signed = (motorDirR > 0) ? wR : -wR;
 
     // Format: VR:v_kanan,VL:v_kiri
-    // Menggunakan 4 angka di belakang koma untuk presisi navigasi
     Serial.print("VR:"); 
     Serial.print(wR_signed, 4);
     Serial.print(",VL:"); 
