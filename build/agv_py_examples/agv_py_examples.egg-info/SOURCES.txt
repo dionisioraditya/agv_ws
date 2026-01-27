@@ -13,11 +13,7 @@ agv_py_examples/simple_parameter.py
 agv_py_examples/simple_publisher.py
 agv_py_examples/simple_subscriber.py
 agv_py_examples/simple_turtlesim_kinematics.py
-agv_py_examples.egg-info/PKG-INFO
-agv_py_examples.egg-info/SOURCES.txt
-agv_py_examples.egg-info/dependency_links.txt
-agv_py_examples.egg-info/entry_points.txt
-agv_py_examples.egg-info/requires.txt
-agv_py_examples.egg-info/top_level.txt
-agv_py_examples.egg-info/zip-safe
 resource/agv_py_examples
+test/test_copyright.py
+test/test_flake8.py
+test/test_pep257.py

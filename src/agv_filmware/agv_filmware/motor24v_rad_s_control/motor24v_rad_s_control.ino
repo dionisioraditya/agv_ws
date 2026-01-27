@@ -112,11 +112,15 @@ void setMotorRight(float value) {
 void handleToken(String tok) {
   tok.trim();
   if (tok.length() < 3) return;
+  char side = toupper(tok[0]);   
+  char dir  = toupper(tok[1]);
+  float v = tok.substring(2).toFloat();  
 
-  char side = toupper(tok[0]);   // 'R' atau 'L'
-  char dir  = toupper(tok[1]);   // 'F' atau 'B'
-  float v = tok.substring(2).toFloat();  // angka setelah RF / LF
-  if (v < 0) v = -v;             // pastikan positif
+  // --- SAFETY LIMITER DI ARDUINO ---
+  // Membatasi target kecepatan maksimal 5 rad/s
+  v = constrain(v, 0.0f, 5.0f); 
+
+  if (v < 0) v = -v;
 
   if (side == 'L') {
     motorDirL = (dir == 'F') ? +1 : -1;
@@ -148,6 +152,7 @@ void setup() {
   setMotorRight(0);
 
   Serial.begin(115200);
+  Serial.setTimeout(10);
 }
 
 // ================== MAIN LOOP ==================
@@ -251,17 +256,16 @@ void loop() {
     setMotorLeft(pwmL);
     setMotorRight(pwmR);
 
-    // ----- 5. Serial Plotter -----
-    // value1 = targetL (signed sesuai arah)
-    // value2 = wL
-    // value3 = targetR (signed)
-    // value4 = wR
-    float tL_signed = (motorDirL > 0) ? targetL : -targetL;
-    float tR_signed = (motorDirR > 0) ? targetR : -targetR;
+    // ----- 5. Output Data untuk ROS 2 Odom Translator -----
+    // Mengalikan magnitudo kecepatan (wL/wR) dengan arah (motorDirL/R)
+    float wL_signed = (motorDirL > 0) ? wL : -wL;
+    float wR_signed = (motorDirR > 0) ? wR : -wR;
 
-    Serial.print(tL_signed); Serial.print(" ");
-    Serial.print(wL);        Serial.print(" ");
-    Serial.print(tR_signed); Serial.print(" ");
-    Serial.println(wR);
+    // Format: VR:v_kanan,VL:v_kiri
+    // Menggunakan 4 angka di belakang koma untuk presisi navigasi
+    Serial.print("VR:"); 
+    Serial.print(wR_signed, 4);
+    Serial.print(",VL:"); 
+    Serial.println(wL_signed, 4);
   }
 }

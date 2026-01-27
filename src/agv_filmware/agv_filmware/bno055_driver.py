@@ -36,13 +36,15 @@ class BNO055Driver(Node):
     def __init__(self):
         super().__init__("bno055_driver")
 
-        # Jetson Orin Nano I2C
         i2c = busio.I2C(board.SCL, board.SDA)
 
         try:
             self.bno = adafruit_bno055.BNO055_I2C(i2c)
             self.get_logger().info("BNO055 connected successfully!")
             self.is_connected = True
+            self.bno.mode = adafruit_bno055.IMUPLUS_MODE 
+            self.get_logger().info("BNO055 connected in IMUPLUS mode!")
+
         except Exception as e:
             self.get_logger().error(f"Failed to connect to BNO055: {e}")
             self.is_connected = False
@@ -60,11 +62,18 @@ class BNO055Driver(Node):
     def timer_callback(self):
         if not self.is_connected:
             return
-
-        # BNO055 menyediakan SI units langsung
+        
         accel = self.bno.acceleration
         gyro = self.bno.gyro
         quat = self.bno.quaternion
+        # calib = self.bno.calibration_status
+        # if quat is None:
+        #     self.get_logger().warn("Data Quaternion NONE! Sensor mungkin hang atau kabel longgar.")
+        #     return
+        # Cek status kalibrasi di logger
+        # sys, g, a, m = calib
+        # if sys < 1:
+        #     self.get_logger().info(f"Menunggu Kalibrasi... Status Sys: {sys} (Gerakkan IMU angka 8!)")
 
         if accel is None or gyro is None or quat is None:
             return
