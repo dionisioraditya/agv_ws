@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/ksr/agv_ws/src/agv_description
+CMAKE_SOURCE_DIR = /home/diordty/agv_ws/src/agv_description
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/ksr/agv_ws/build/agv_description
+CMAKE_BINARY_DIR = /home/diordty/agv_ws/build/agv_description
 
 # Utility rule file for agv_description_uninstall.
 
@@ -67,7 +67,7 @@ include CMakeFiles/agv_description_uninstall.dir/compiler_depend.make
 include CMakeFiles/agv_description_uninstall.dir/progress.make
 
 CMakeFiles/agv_description_uninstall:
-	/usr/bin/cmake -P /home/ksr/agv_ws/build/agv_description/ament_cmake_uninstall_target/ament_cmake_uninstall_target.cmake
+	/usr/bin/cmake -P /home/diordty/agv_ws/build/agv_description/ament_cmake_uninstall_target/ament_cmake_uninstall_target.cmake
 
 agv_description_uninstall: CMakeFiles/agv_description_uninstall
 agv_description_uninstall: CMakeFiles/agv_description_uninstall.dir/build.make
@@ -82,6 +82,6 @@ CMakeFiles/agv_description_uninstall.dir/clean:
 .PHONY : CMakeFiles/agv_description_uninstall.dir/clean
 
 CMakeFiles/agv_description_uninstall.dir/depend:
-	cd /home/ksr/agv_ws/build/agv_description && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/ksr/agv_ws/src/agv_description /home/ksr/agv_ws/src/agv_description /home/ksr/agv_ws/build/agv_description /home/ksr/agv_ws/build/agv_description /home/ksr/agv_ws/build/agv_description/CMakeFiles/agv_description_uninstall.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/diordty/agv_ws/build/agv_description && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/diordty/agv_ws/src/agv_description /home/diordty/agv_ws/src/agv_description /home/diordty/agv_ws/build/agv_description /home/diordty/agv_ws/build/agv_description /home/diordty/agv_ws/build/agv_description/CMakeFiles/agv_description_uninstall.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/agv_description_uninstall.dir/depend
 

@@ -10,5 +10,6 @@
         "/opt/ros/humble/local/lib/python3.10/dist-packages"
     ],
     "github.copilot.chat.codeGeneration.useInstructionFiles": true,
-    "cmake.sourceDirectory": "/home/ksr/agv_ws/src/agv_cpp_examples"
+    "cmake.sourceDirectory": "/home/ksr/agv_ws/src/agv_cpp_examples",
+    "ROS2.distro": "humble"
 }

@@ -113,3 +113,52 @@ ros2 launch agv_controller controller.launch.py use_simple_control:=false
 # Joystick Teleoperation
 ros2 launch agv_controller joystick_teleop.launch.py
 ```
+
+## Robot ROS Node Topic
+### Depth Camera & Lidar
+Use rviz for lidar or depth camera visualization
+#### Depth Camera topic
+```bash
+# make sure you have cloned the Astra Camera repository (link on .gitmodules)
+# Open new terminal
+cd ~/agv_ws
+. install/setup.bash
+ros2 launch astra_camera astra_pro.launch.xml uvc_product_id:=0x050f
+```
+
+#### Lidar topic topic
+```bash
+# Open new terminal
+cd ~/agv_ws
+. install/setup.bash
+ros2 launch rplidar_ros rplidar_a2m8_launch.py serial_port:=/dev/rplidar
+
+```
+### Robot Odometry (Differential Kinematic & IMU)
+#### IMU Node
+```bash
+# Open new terminal
+cd ~agv_ws
+. install/setup.bash
+ros2 run agv_filmware bno055_driver
+```
+#### Odometry Node
+```bash
+# Open new terminal
+cd ~agv_ws
+. install/setup.bash
+ros2 run agv_controller odom_translator.py
+```
+#### Keyboard controller
+```bash
+# Open new terminal
+cd ~agv_ws
+. install/setup.bash
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
+
+# I = Forward
+# K = Stop
+# L = Turn right
+# J = Turn left
+# , = Reverse
+```
