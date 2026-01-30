@@ -33,7 +33,7 @@ Repository ini bertujuan untuk:
 | 🧠 **Nvidia Jetson Orin Nano** | Single Board Computer |
 | 🎥 **Intel Realsense Astra Pro Plus** | Depth Camera |
 | 🛰️ **RPLIDAR A2M8** | 360° Lidar Scanner |
-
+| 🧭 **BNO055** | Inertial Measuring Unit |
 ---
 
 ## 📜 Installation & Usage Guide
