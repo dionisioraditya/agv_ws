@@ -1,7 +1,7 @@
-<h1 align="center">🌐 Robotic UAJY – Automated Guided Vehicle (AGV) Workspace</h1>
+<h1 align="center">🌐 Robotic UAJY – Autonomous Mobile Robot (AMR)/ Automated Guided Vehicle (AGV) Workspace</h1>
 
 <p align="center">
-  Repository ini berisi <b>source code</b> dan konfigurasi <b>robot AGV KSR</b> yang dikembangkan menggunakan <b>ROS2 Humble</b>.<br>
+  Repository ini berisi <b>source code</b> dan konfigurasi <b>robot AMR/ AGV KSR</b> yang dikembangkan menggunakan <b>ROS2 Humble</b>.<br>
   Digunakan untuk keperluan <b>simulasi, penelitian, dan pengembangan path planning</b> sistem robotika.
 </p>
 
@@ -9,7 +9,7 @@
 
 ## 🎯 Goals
 Repository ini bertujuan untuk:
-- 🧠 Menyediakan lingkungan simulasi <b>AGV (Automated Guided Vehicle)</b> berbasis ROS2.  
+- 🧠 Menyediakan lingkungan simulasi <b>AMR/ AGV</b> berbasis framework ROS2.  
 - 🤖 Menjadi platform <b>Research & Development</b> untuk algoritma **path planning** dan **AI navigation**.  
 - 🔧 Menjadi pondasi untuk integrasi robot fisik berbasis **Jetson Orin + ROS2**.
 
