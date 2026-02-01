@@ -48,6 +48,7 @@ sudo apt install -y \
     ros-humble-joint-state-broadcaster \
     ros-humble-ros2controlcli \
     ros-humble-xacro \
+    ros-humble-joint-state-publisher-gui \
     ros-humble-ros-gz*
 ```
 

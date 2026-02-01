@@ -1,0 +1,272 @@
+<?xml version="1.0" ?>
+<robot name="agv_origin" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<xacro:include filename="$(find agv_origin_description)/urdf/materials.xacro" />
+<xacro:include filename="$(find agv_origin_description)/urdf/agv_origin.trans" />
+<xacro:include filename="$(find agv_origin_description)/urdf/agv_origin.gazebo" />
+<link name="base_footprint"/>
+
+<joint name="base_footprint_joint" type="fixed">
+  <parent link="base_footprint"/>
+  <child link="base_link"/>
+  <origin xyz="0 0 0.1005" rpy="0 0 0"/>
+</joint>
+<link name="base_link">
+  <inertial>
+    <origin xyz="-3.244789018330238e-07 -0.0010765720842164906 0.07086414896629663" rpy="0 0 0"/>
+    <mass value="104.19831248399346"/>
+    <inertia ixx="0.994899" iyy="1.00618" izz="1.564619" ixy="-4e-06" iyz="-0.010142" ixz="-3e-06"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find agv_origin_description)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find agv_origin_description)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="lidar_1">
+  <inertial>
+    <origin xyz="6.625073916904315e-18 6.625073916904315e-18 0.010250000000000009" rpy="0 0 0"/>
+    <mass value="0.6735333728409896"/>
+    <inertia ixx="0.000248" iyy="0.000248" izz="0.000449" ixy="0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.0 -0.0 -0.22" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find agv_origin_description)/meshes/lidar_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.0 -0.0 -0.22" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find agv_origin_description)/meshes/lidar_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="imu_link">
+  <visual>
+    <geometry>
+      <box size="0.04 0.04 0.01"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+</link>
+
+<link name="depth_cam_1">
+  <inertial>
+    <origin xyz="0.0 0.0 0.014999999999999986" rpy="0 0 0"/>
+    <mass value="1.412999999999999"/>
+    <inertia ixx="0.000212" iyy="0.004816" izz="0.004816" ixy="0.0" iyz="0.0" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.0 0.115 -0.14" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find agv_origin_description)/meshes/depth_cam_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.0 0.115 -0.14" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find agv_origin_description)/meshes/depth_cam_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="left_wheel_1">
+  <inertial>
+    <origin xyz="0.01350000000000004 1.5497114980167481e-09 -6.482005140973079e-10" rpy="0 0 0"/>
+    <mass value="2.13458250728232"/>
+    <inertia ixx="0.003514" iyy="0.001887" izz="0.001887" ixy="0.0" iyz="-0.0" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.1578 -0.104 0.0435" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find agv_origin_description)/meshes/left_wheel_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.1578 -0.104 0.0435" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find agv_origin_description)/meshes/left_wheel_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="right_wheel_1">
+  <inertial>
+    <origin xyz="-0.013499999999999984 1.5497114980167481e-09 -6.482005140973079e-10" rpy="0 0 0"/>
+    <mass value="2.13458250728232"/>
+    <inertia ixx="0.003514" iyy="0.001887" izz="0.001887" ixy="0.0" iyz="-0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.1578 -0.104 0.0435" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find agv_origin_description)/meshes/right_wheel_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.1578 -0.104 0.0435" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find agv_origin_description)/meshes/right_wheel_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="castrol_bracket_right_1">
+  <inertial>
+    <origin xyz="0.01608195515952232 0.022102290099966046 -0.011027594642399899" rpy="0 0 0"/>
+    <mass value="0.03265959573384071"/>
+    <inertia ixx="1.4e-05" iyy="6e-06" izz="1.2e-05" ixy="-3e-06" iyz="4e-06" ixz="1e-06"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.12695 0.1222 0.0406" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find agv_origin_description)/meshes/castrol_bracket_right_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.12695 0.1222 0.0406" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find agv_origin_description)/meshes/castrol_bracket_right_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="castrol_wheel_right_1">
+  <inertial>
+    <origin xyz="-0.013999958585943356 -1.3113066604786283e-09 -1.1175870923141318e-09" rpy="0 0 0"/>
+    <mass value="0.43733266648974745"/>
+    <inertia ixx="0.000142" iyy="0.0001" izz="0.0001" ixy="0.0" iyz="0.0" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.109238 0.088 0.075" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find agv_origin_description)/meshes/castrol_wheel_right_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.109238 0.088 0.075" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find agv_origin_description)/meshes/castrol_wheel_right_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="castrol_bracket_left_1">
+  <inertial>
+    <origin xyz="-0.016081955159522376 0.022102290099966018 -0.011027594642399823" rpy="0 0 0"/>
+    <mass value="0.032659595733840543"/>
+    <inertia ixx="1.4e-05" iyy="6e-06" izz="1.2e-05" ixy="3e-06" iyz="4e-06" ixz="-1e-06"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.12695 0.1222 0.0406" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find agv_origin_description)/meshes/castrol_bracket_left_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.12695 0.1222 0.0406" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find agv_origin_description)/meshes/castrol_bracket_left_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="castrol_wheel_left_1">
+  <inertial>
+    <origin xyz="0.013999958585943356 -1.3113066604786283e-09 -1.1175870923141318e-09" rpy="0 0 0"/>
+    <mass value="0.43733266648974745"/>
+    <inertia ixx="0.000142" iyy="0.0001" izz="0.0001" ixy="0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.109238 0.088 0.075" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find agv_origin_description)/meshes/castrol_wheel_left_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.109238 0.088 0.075" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find agv_origin_description)/meshes/castrol_wheel_left_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="Rigid 1" type="fixed">
+  <origin xyz="0.0 0.0 0.22" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="lidar_1"/>
+</joint>
+
+<joint name="Rigid 2" type="fixed">
+  <origin xyz="0.0 -0.115 0.14" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="depth_cam_1"/>
+</joint>
+
+<joint name="Revolute 3" type="continuous">
+  <origin xyz="0.1578 0.104 -0.0435" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="left_wheel_1"/>
+  <axis xyz="-1.0 0.0 0.0"/>
+</joint>
+
+<joint name="Revolute 4" type="continuous">
+  <origin xyz="-0.1578 0.104 -0.0435" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="right_wheel_1"/>
+  <axis xyz="-1.0 0.0 0.0"/>
+</joint>
+
+<joint name="Revolute 5" type="continuous">
+  <origin xyz="-0.12695 -0.1222 -0.0406" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="castrol_bracket_right_1"/>
+  <axis xyz="0.0 0.0 -1.0"/>
+</joint>
+
+<joint name="Revolute 6" type="continuous">
+  <origin xyz="0.017712 0.0342 -0.0344" rpy="0 0 0"/>
+  <parent link="castrol_bracket_right_1"/>
+  <child link="castrol_wheel_right_1"/>
+  <axis xyz="-1.0 0.0 0.0"/>
+</joint>
+
+<joint name="Revolute 7" type="continuous">
+  <origin xyz="0.12695 -0.1222 -0.0406" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="castrol_bracket_left_1"/>
+  <axis xyz="0.0 0.0 -1.0"/>
+</joint>
+
+<joint name="Revolute 8" type="continuous">
+  <origin xyz="-0.017712 0.0342 -0.0344" rpy="0 0 0"/>
+  <parent link="castrol_bracket_left_1"/>
+  <child link="castrol_wheel_left_1"/>
+  <axis xyz="-1.0 0.0 0.0"/>
+</joint>
+
+<joint name="imu_joint" type="fixed">
+  <origin xyz="0.0 0.0 0.1" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="imu_link"/>
+</joint>
+
+</robot>
