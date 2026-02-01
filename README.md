@@ -127,7 +127,7 @@ cd ~/agv_ws
 ros2 launch astra_camera astra_pro.launch.xml uvc_product_id:=0x050f
 ```
 
-#### Lidar topic topic
+#### Lidar topic
 ```bash
 # Open new terminal
 cd ~/agv_ws
