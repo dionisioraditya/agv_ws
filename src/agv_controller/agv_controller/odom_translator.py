@@ -106,7 +106,8 @@ class OdomTranslator(Node):
                 siny_cosp = 2 * (self.current_quat[3] * self.current_quat[2] + self.current_quat[0] * self.current_quat[1])
                 cosy_cosp = 1 - 2 * (self.current_quat[1]**2 + self.current_quat[2]**2)
                 yaw = math.atan2(siny_cosp, cosy_cosp)
-
+                yaw = yaw - 1.5708
+                
                 # Update Posisi X dan Y (Integrasi Euler)
                 self.x += v * math.cos(yaw) * dt
                 self.y += v * math.sin(yaw) * dt
@@ -116,7 +117,8 @@ class OdomTranslator(Node):
                 odom.header.stamp = now.to_msg()
                 odom.header.frame_id = "odom"
                 odom.child_frame_id = "base_link"
-                
+                odom.child_frame_id = "base_footprint"
+
                 odom.pose.pose.position.x = self.x
                 odom.pose.pose.position.y = self.y
                 odom.pose.pose.orientation.x = self.current_quat[0]
@@ -130,6 +132,7 @@ class OdomTranslator(Node):
                 t = TransformStamped()
                 t.header = odom.header
                 t.child_frame_id = "base_link"
+                t.child_frame_id = "base_footprint"
                 t.transform.translation.x = self.x
                 t.transform.translation.y = self.y
                 t.transform.rotation = odom.pose.pose.orientation
