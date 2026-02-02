@@ -107,7 +107,7 @@ class OdomTranslator(Node):
                 cosy_cosp = 1 - 2 * (self.current_quat[1]**2 + self.current_quat[2]**2)
                 yaw = math.atan2(siny_cosp, cosy_cosp)
                 yaw = yaw - 1.5708
-                
+
                 # Update Posisi X dan Y (Integrasi Euler)
                 self.x += v * math.cos(yaw) * dt
                 self.y += v * math.sin(yaw) * dt
