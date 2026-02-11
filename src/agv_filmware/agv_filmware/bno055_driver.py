@@ -43,6 +43,7 @@ class BNO055Driver(Node):
             self.get_logger().info("BNO055 connected successfully!")
             self.is_connected = True
             self.bno.mode = adafruit_bno055.IMUPLUS_MODE 
+            # self.bno.mode = adafruit_bno055.NDOF_MODE 
             self.get_logger().info("BNO055 connected in IMUPLUS mode!")
 
         except Exception as e:
@@ -58,6 +59,21 @@ class BNO055Driver(Node):
 
         # 100 Hz
         self.timer = self.create_timer(0.01, self.timer_callback)
+    
+    def euler_to_quaternion(self, roll, pitch, yaw):
+        """Konversi Euler (radian) kembali ke Quaternion (w, x, y, z)."""
+        cy = math.cos(yaw * 0.5)
+        sy = math.sin(yaw * 0.5)
+        cp = math.cos(pitch * 0.5)
+        sp = math.sin(pitch * 0.5)
+        cr = math.cos(roll * 0.5)
+        sr = math.sin(roll * 0.5)
+
+        w = cr * cp * cy + sr * sp * sy
+        x = sr * cp * cy - cr * sp * sy
+        y = cr * sp * cy + sr * cp * sy
+        z = cr * cp * sy - sr * sp * cy
+        return w, x, y, z
 
     def timer_callback(self):
         if not self.is_connected:
@@ -78,49 +94,37 @@ class BNO055Driver(Node):
         if accel is None or gyro is None or quat is None:
             return
 
-        # Timestamp
+        w_raw, x_raw, y_raw, z_raw = quat
+        roll, pitch, yaw = quaternion_to_euler(w_raw, x_raw, y_raw, z_raw)
+
+        #yaw_corrected = yaw + (math.pi / 2)
+        yaw_corrected = yaw
+        #yaw_corrected = yaw + math.pi
+ 
+        w_new, x_new, y_new, z_new = self.euler_to_quaternion(roll, pitch, yaw_corrected)
+
+     
         self.imu_msg.header.stamp = self.get_clock().now().to_msg()
+        
+        
+        self.imu_msg.orientation.w = w_new
+        self.imu_msg.orientation.x = x_new
+        self.imu_msg.orientation.y = y_new
+        self.imu_msg.orientation.z = z_new
 
-        # Linear Acceleration
-        self.imu_msg.linear_acceleration.x = accel[0]
-        self.imu_msg.linear_acceleration.y = accel[1]
-        self.imu_msg.linear_acceleration.z = accel[2]
-
-        # Angular Velocity
-        self.imu_msg.angular_velocity.x = gyro[0]
-        self.imu_msg.angular_velocity.y = gyro[1]
-        self.imu_msg.angular_velocity.z = gyro[2]
-
-        # Quaternion
-        w, x, y, z = quat
-        self.imu_msg.orientation.w = w
-        self.imu_msg.orientation.x = x
-        self.imu_msg.orientation.y = y
-        self.imu_msg.orientation.z = z
-
-        # Publish IMU message
+        #PUBLISH (Data ini yang akan dibaca oleh Slam Toolbox & Odom)
         self.imu_pub.publish(self.imu_msg)
 
-        # Convert quaternion → euler (radian)
-        roll, pitch, yaw = quaternion_to_euler(w, x, y, z)
-
-        # Euler dalam derajat
-        roll_deg = math.degrees(roll)
-        pitch_deg = math.degrees(pitch)
-        yaw_deg = math.degrees(yaw)
-
-        # Publish Euler
+        # Publikasikan Euler untuk monitoring di terminal
+        yaw_deg_final = math.degrees(yaw_corrected)
         euler_msg = Vector3()
-        euler_msg.x = roll_deg
-        euler_msg.y = pitch_deg
-        euler_msg.z = yaw_deg
+        euler_msg.x = math.degrees(roll)
+        euler_msg.y = math.degrees(pitch)
+        euler_msg.z = yaw_deg_final
         self.euler_pub.publish(euler_msg)
 
         # Debug print
-        self.get_logger().info(
-            f"Euler deg → Roll: {roll_deg:6.2f} | Pitch: {pitch_deg:6.2f} | Yaw: {yaw_deg:6.2f}"
-        )
-
+        self.get_logger().info(f"Yaw Terkoreksi: {yaw_deg_final:6.2f} | Sensor Asli: {math.degrees(yaw):6.2f}")
 
 def main(args=None):
     rclpy.init(args=args)
