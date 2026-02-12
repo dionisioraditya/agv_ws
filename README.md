@@ -49,6 +49,8 @@ sudo apt install -y \
     ros-humble-ros2controlcli \
     ros-humble-xacro \
     ros-humble-joint-state-publisher-gui \
+    ros-humble-rplidar-ros \
+    ros-humble-slam-toolbox \
     ros-humble-ros-gz*
 ```
 
@@ -162,4 +164,29 @@ ros2 run teleop_twist_keyboard teleop_twist_keyboard
 # L = Turn right
 # J = Turn left
 # , = Reverse
+```
+
+## Bringup all important nodes
+this is important part to run SLAM!
+```bash
+# Open new terminal
+cd ~agv_ws
+. install/setup.bash
+ros2 launch agv_origin_description agv_bringup.launch.py
+```
+
+## SLAM
+### SLAM TOOLBOX
+```bash
+# Open new terminal
+cd ~agv_ws
+. install/setup.bash
+ros2 launch slam_toolbox online_async_launch.py
+```
+### Save Map
+```bash
+# Open new terminal
+cd ~agv_ws
+. install/setup.bash
+ros2 run nav2_map_server map_saver_cli -f ~/agv_ws/src/agv_origin_description/maps/map_labslam_toolbox online_async_launch.py
 ```
