@@ -47,7 +47,7 @@ def generate_launch_description():
             ),
             launch_arguments={
                 'serial_port': '/dev/rplidar',
-                'frame_id': 'lidar_1' # Harus sinkron dengan URDF 
+                'frame_id': 'lidar_1'
             }.items()
         )
     ])
