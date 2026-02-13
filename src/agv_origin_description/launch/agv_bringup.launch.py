@@ -40,7 +40,7 @@ def generate_launch_description():
             package='agv_filmware',
             executable='bno055_driver'
         ),
-        # RPLidar A2M8 (Command Anda)
+        # RPLidar A2M8
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 os.path.join(pkg_lidar, 'launch', 'rplidar_a2m8_launch.py')
