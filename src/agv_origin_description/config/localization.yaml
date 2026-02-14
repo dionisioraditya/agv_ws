@@ -1,0 +1,9 @@
+slam_toolbox:
+  ros__parameters:
+    mode: localization
+    map_file_name: /home/ksr/agv_ws/src/agv_origin_description/maps/map_lab
+    odom_frame: odom
+    map_frame: map
+    base_frame: base_footprint
+    scan_topic: /scan
+    use_sim_time: false

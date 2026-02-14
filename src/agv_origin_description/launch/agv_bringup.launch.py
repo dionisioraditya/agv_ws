@@ -15,8 +15,20 @@ def generate_launch_description():
     xacro_file = os.path.join(pkg_description, 'urdf', 'agv_origin.xacro')
     robot_description = xacro.process_file(xacro_file).toxml()
 
-    # 2. Node Hardware
+    pkg_controller = get_package_share_directory('agv_controller')
+    twist_mux_config = os.path.join(pkg_controller, 'config', 'twist_mux.yaml')
+
+    # 2. Node Hardware & Config twist controll
     return LaunchDescription([
+        Node(
+            package='twist_mux',
+            executable='twist_mux',
+            output='screen',
+            parameters=[twist_mux_config],
+            remappings=[
+                ('cmd_vel_out', 'cmd_vel')
+            ]
+        ),
         # Robot State Publisher
         Node(
             package='joint_state_publisher',

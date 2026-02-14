@@ -100,8 +100,8 @@ class OdomTranslator(Node):
                 if dt <= 0: return
 
                 # Menghitung kecepatan linear (v) robot
-                v = (vr + vl) * self.wheel_radius / 2.0
-                
+                # v = (vr + vl) * self.wheel_radius / 2.0
+                v = -1.0 * (vr + vl) * self.wheel_radius / 2.0
                 # Mengambil Yaw dari orientasi IMU BNO055
                 siny_cosp = 2 * (self.current_quat[3] * self.current_quat[2] + self.current_quat[0] * self.current_quat[1])
                 cosy_cosp = 1 - 2 * (self.current_quat[1]**2 + self.current_quat[2]**2)

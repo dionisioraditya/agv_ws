@@ -51,6 +51,7 @@ sudo apt install -y \
     ros-humble-joint-state-publisher-gui \
     ros-humble-rplidar-ros \
     ros-humble-slam-toolbox \
+    ros-humble-navigation2 ros-humble-nav2-bringup ros-humble-robot-localization \
     ros-humble-ros-gz*
 ```
 
