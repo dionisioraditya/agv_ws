@@ -156,9 +156,7 @@ ros2 run agv_controller odom_translator.py
 #### Keyboard controller
 ```bash
 # Open new terminal
-cd ~agv_ws
-. install/setup.bash
-ros2 run teleop_twist_keyboard teleop_twist_keyboard
+ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r cmd_vel:=cmd_vel_key
 
 # I = Forward
 # K = Stop
@@ -176,7 +174,7 @@ cd ~agv_ws
 ros2 launch agv_origin_description agv_bringup.launch.py
 ```
 
-## SLAM
+## SLAM & Nav2
 ### SLAM TOOLBOX
 ```bash
 # Open new terminal
@@ -190,4 +188,19 @@ ros2 launch slam_toolbox online_async_launch.py
 cd ~agv_ws
 . install/setup.bash
 ros2 run nav2_map_server map_saver_cli -f ~/agv_ws/src/agv_origin_description/maps/map_labslam_toolbox online_async_launch.py
+```
+### SLAM TOOLBOX Localization from generated map
+```bash
+# Open new terminal
+cd ~agv_ws
+. install/setup.bash
+ros2 launch slam_toolbox localization_launch.py slam_params_file:=/home/ksr/agv_ws/src/agv_origin_description/config/mapper_params_online_async.yaml use_sim_time:=false
+```
+
+### Autonomous Navigation with nav2
+```bash
+# Open new terminal
+cd ~agv_ws
+. install/setup.bash
+ros2 launch agv_controller agv_navigation.launch.py
 ```
