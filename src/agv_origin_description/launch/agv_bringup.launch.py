@@ -61,5 +61,18 @@ def generate_launch_description():
                 'serial_port': '/dev/rplidar',
                 'frame_id': 'lidar_1'
             }.items()
-        )
+        ),
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                os.path.join(
+                    get_package_share_directory('astra_camera'),
+                    'launch',
+                    'astra_pro.launch.xml'
+                )
+            ),
+            launch_arguments={
+                'uvc_product_id': '0x050f',
+                'camera_frame': 'depth_cam_1'
+            }.items()
+        ),
     ])
