@@ -50,7 +50,7 @@ class OdomTranslator(Node):
        
         self.create_timer(0.02, self.update_logic)
 
-    def cmd_vel_callback(self, msg):
+    def cmd_vel_callback(self, msg): #fungsi Inverse Differential Kinematic
         if self.ser is None or not self.ser.is_open:
             return
 
@@ -71,6 +71,7 @@ class OdomTranslator(Node):
         if current_cmd != self.last_cmd:
             self.ser.write((current_cmd + "\n").encode('utf-8'))
             self.last_cmd = current_cmd
+
     def imu_callback(self, msg):
         # Ambil quanternion dari IMU
         self.current_quat = [
@@ -80,7 +81,7 @@ class OdomTranslator(Node):
             msg.orientation.w
         ]
 
-    def update_logic(self):
+    def update_logic(self): #fungsi Forward Differential Kinematic
         if self.ser is None or not self.ser.is_open:
             return
 
@@ -93,26 +94,20 @@ class OdomTranslator(Node):
                     vr = float(parts['VR'])
                     vl = float(parts['VL'])
 
-                # DIFFERENTIAL KINEMATIC
                 now = self.get_clock().now()
                 dt = (now - self.last_time).nanoseconds / 1e9
                 self.last_time = now
                 if dt <= 0: return
 
-                # Menghitung kecepatan linear (v) robot
                 v = (vr + vl) * self.wheel_radius / 2.0
-                #v = -1.0 * (vr + vl) * self.wheel_radius / 2.0
-                # Mengambil Yaw dari orientasi IMU BNO055
                 siny_cosp = 2 * (self.current_quat[3] * self.current_quat[2] + self.current_quat[0] * self.current_quat[1])
                 cosy_cosp = 1 - 2 * (self.current_quat[1]**2 + self.current_quat[2]**2)
                 yaw = math.atan2(siny_cosp, cosy_cosp)
                 # yaw = yaw - 1.5708
 
-                # Update Posisi X dan Y (Integrasi Euler)
                 self.x += v * math.cos(yaw) * dt
                 self.y += v * math.sin(yaw) * dt
 
-                # Publikasi Odometry
                 odom = Odometry()
                 odom.header.stamp = now.to_msg()
                 odom.header.frame_id = "odom"
