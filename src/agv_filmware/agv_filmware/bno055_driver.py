@@ -124,7 +124,7 @@ class BNO055Driver(Node):
         self.euler_pub.publish(euler_msg)
 
         # Debug print
-        self.get_logger().info(f"Yaw Terkoreksi: {yaw_deg_final:6.2f} | Sensor Asli: {math.degrees(yaw):6.2f}")
+        # self.get_logger().info(f"Yaw Terkoreksi: {yaw_deg_final:6.2f} | Sensor Asli: {math.degrees(yaw):6.2f}")
 
 def main(args=None):
     rclpy.init(args=args)

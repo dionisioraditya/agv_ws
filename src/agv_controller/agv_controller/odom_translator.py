@@ -139,9 +139,9 @@ class OdomTranslator(Node):
                 self.tf_broadcaster.sendTransform(t)
                 yaw_deg = math.degrees(yaw)
         
-                self.get_logger().info(
-                    f"POSISI -> X: {self.x:6.2f} | Y: {self.y:6.2f} | Yaw: {yaw_deg:6.1f}°"
-                )  
+                # self.get_logger().info(
+                #     f"POSISI -> X: {self.x:6.2f} | Y: {self.y:6.2f} | Yaw: {yaw_deg:6.1f}°"
+                # )  
             except:
                 continue
 
