@@ -1,0 +1,8 @@
+<library path="my_nav2_planners">
+  <class
+    name="my_nav2_planners/MyPlanner"
+    type="my_nav2_planners::MyPlanner"
+    base_class_type="nav2_core::GlobalPlanner">
+    <description>Custom Nav2 global planner for R&D</description>
+  </class>
+</library>
