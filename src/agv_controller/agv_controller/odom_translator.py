@@ -21,17 +21,15 @@ class OdomTranslator(Node):
         except Exception as e:
             self.get_logger().error(f"Gagal koneksi Serial: {e}")
 
-        # 2. Parameter Fisik AGV
-        self.wheel_radius = 0.057  # 5 cm
-        self.wheel_base = 0.39    # 30 cm
+        # satuan cm
+        self.wheel_radius = 0.057  
+        self.wheel_base = 0.39    
         
-        # State Robot
         self.x = 0.0
         self.y = 0.0
         self.last_time = self.get_clock().now()
-        self.current_quat = [0.0, 0.0, 0.0, 1.0] # [x,y,z,w] dari IMU
+        self.current_quat = [0.0, 0.0, 0.0, 1.0] # [x,y,z,w]
 
-        # Subscriber & Publisher
         self.imu_sub = self.create_subscription(
             Imu, 
             '/imu/out', 
