@@ -67,17 +67,18 @@ long lastPosR = 0;
 
 // ================== ENCODER ISR ==================
 void readEncoderL() {
-  bool A = digitalRead(ENC_L_A);
+  // ISR untuk mode RISING pada channel A.
+  // A pasti HIGH saat ISR terpanggil, cukup baca B untuk menentukan arah.
+  // Jika arah kebalik, tukar ++/-- di sini.
   bool B = digitalRead(ENC_L_B);
-  if (A == B) posL++;
-  else        posL--;
+  if (B) posL++;
+  else   posL--;
 }
 
 void readEncoderR() {
-  bool A = digitalRead(ENC_R_A);
   bool B = digitalRead(ENC_R_B);
-  if (A == B) posR++;
-  else        posR--;
+  if (B) posR++;
+  else   posR--;
 }
 
 // ================== SET MOTOR FUNCTIONS ==================
@@ -113,9 +114,8 @@ void handleToken(String tok) {
   char dir  = toupper(tok[1]);
   float v = tok.substring(2).toFloat();  
 
-  // --- SAFETY LIMITER DI ARDUINO ---
-  // Membatasi target kecepatan maksimal 5 rad/s
-  v = constrain(v, 0.0f, 5.0f); 
+  // NOTE: Tidak ada limit rad/s di Arduino.
+  // Limit kecepatan dilakukan di sisi kinematic python (Nav2/diff-drive).
 
   if (v < 0) v = -v;
 
@@ -136,8 +136,9 @@ void setup() {
   pinMode(ENC_R_A, INPUT_PULLUP);
   pinMode(ENC_R_B, INPUT_PULLUP);
 
-  attachInterrupt(digitalPinToInterrupt(ENC_L_A), readEncoderL, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(ENC_R_A), readEncoderR, CHANGE);
+  // Mengurangi beban ISR: CHANGE -> RISING (jumlah interrupt ~ setengah)
+  attachInterrupt(digitalPinToInterrupt(ENC_L_A), readEncoderL, RISING);
+  attachInterrupt(digitalPinToInterrupt(ENC_R_A), readEncoderR, RISING);
 
   // Motor driver pins
   pinMode(PWM_L_FWD, OUTPUT);
@@ -185,8 +186,10 @@ void loop() {
     lastPosL = pL;
     lastPosR = pR;
 
-    wL = (dL / COUNTS_PER_REV) * 2.0f * PI / SAMPLE_PERIOD;
-    wR = (dR / COUNTS_PER_REV) * 2.0f * PI / SAMPLE_PERIOD;
+    // Karena interrupt sekarang hanya RISING (bukan CHANGE), jumlah hitungan per periode
+    // menjadi ~setengah. Agar skala rad/s tetap sama seperti versi CHANGE, kalikan delta x2.
+    wL = ((2.0f * dL) / COUNTS_PER_REV) * 2.0f * PI / SAMPLE_PERIOD;
+    wR = ((2.0f * dR) / COUNTS_PER_REV) * 2.0f * PI / SAMPLE_PERIOD;
     if (wL < 0) wL = -wL;
     if (wR < 0) wR = -wR;
 

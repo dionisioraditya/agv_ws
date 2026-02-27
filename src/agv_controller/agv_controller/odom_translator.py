@@ -58,8 +58,8 @@ class OdomTranslator(Node):
         vr_rad = (2 * v + w * self.wheel_base) / (2 * self.wheel_radius)
         vl_rad = (2 * v - w * self.wheel_base) / (2 * self.wheel_radius)
 
-        vr_rad = max(-5.0, min(5.0, vr_rad))
-        vl_rad = max(-5.0, min(5.0, vl_rad))
+        vr_rad = max(-20.0, min(20.0, vr_rad))
+        vl_rad = max(-20.0, min(20.0, vl_rad))
 
         dir_r = "F" if vr_rad >= 0 else "B"
         dir_l = "F" if vl_rad >= 0 else "B"
@@ -109,7 +109,7 @@ class OdomTranslator(Node):
                 odom = Odometry()
                 odom.header.stamp = now.to_msg()
                 odom.header.frame_id = "odom"
-                odom.child_frame_id = "base_link"
+                #odom.child_frame_id = "base_link"
                 odom.child_frame_id = "base_footprint"
 
                 odom.pose.pose.position.x = self.x
@@ -124,7 +124,7 @@ class OdomTranslator(Node):
                 # Broadcast TF (Transformasi untuk RViz)
                 t = TransformStamped()
                 t.header = odom.header
-                t.child_frame_id = "base_link"
+                #t.child_frame_id = "base_link"
                 t.child_frame_id = "base_footprint"
                 t.transform.translation.x = self.x
                 t.transform.translation.y = self.y
