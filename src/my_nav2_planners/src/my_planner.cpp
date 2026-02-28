@@ -12,6 +12,8 @@
 #include "pluginlib/class_list_macros.hpp"
 #include "nav2_costmap_2d/costmap_2d.hpp"
 #include "nav2_costmap_2d/cost_values.hpp"
+#include "tf2/utils.h"
+#include "tf2/LinearMath/Quaternion.h"
 
 namespace my_nav2_planners
 {
@@ -33,7 +35,7 @@ void MyPlanner::configure(
 
     node_->get_parameter(name_ + ".timeout_sec", timeout_sec_);
     node_->get_parameter(name_ + ".allow_unknown", allow_unknown_);
-    
+
     node_->declare_parameter(name_ + ".max_iterations", max_iterations_);
     node_->declare_parameter(name_ + ".step_size", step_size_);
     node_->declare_parameter(name_ + ".goal_tolerance", goal_tolerance_);
@@ -381,6 +383,7 @@ nav_msgs::msg::Path MyPlanner::createPlan(
   }
 
   return path;
+}
 }  // namespace my_nav2_planners
 
 PLUGINLIB_EXPORT_CLASS(my_nav2_planners::MyPlanner, nav2_core::GlobalPlanner)
