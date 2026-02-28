@@ -40,8 +40,16 @@ private:
   std::shared_ptr<nav2_costmap_2d::Costmap2DROS> costmap_ros_;
 
   // Example params you can tune for your algorithm
-  double timeout_sec_{1.0};
-  bool allow_unknown_{true};
+  double timeout_sec_{1.5};
+  bool allow_unknown_{false};
+
+  // === RRT params (ADD) ===
+  int max_iterations_{8000};
+  double step_size_{0.25};        // meter
+  double goal_tolerance_{0.30};   // meter
+  double goal_bias_{0.05};        // 0..1
+  bool smooth_path_{true};
+  int smooth_tries_{200};
 
   // Helpers
   bool worldToMap(double wx, double wy, unsigned int & mx, unsigned int & my) const;
