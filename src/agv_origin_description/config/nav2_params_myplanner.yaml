@@ -281,7 +281,7 @@ planner_server:
 
     planner_plugins: ["RRT"]
     RRT:
-      plugin: "my_nav2_planners::MyPlanner"   
+      plugin: "my_nav2_planners/MyPlanner"   
       timeout_sec: 1.5
       allow_unknown: false
 
