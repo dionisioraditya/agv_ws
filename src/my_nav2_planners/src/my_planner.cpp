@@ -33,6 +33,7 @@ void MyPlanner::configure(
 
     node_->get_parameter(name_ + ".timeout_sec", timeout_sec_);
     node_->get_parameter(name_ + ".allow_unknown", allow_unknown_);
+    
     node_->declare_parameter(name_ + ".max_iterations", max_iterations_);
     node_->declare_parameter(name_ + ".step_size", step_size_);
     node_->declare_parameter(name_ + ".goal_tolerance", goal_tolerance_);
