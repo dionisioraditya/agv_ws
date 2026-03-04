@@ -204,3 +204,21 @@ cd ~agv_ws
 . install/setup.bash
 ros2 launch agv_controller agv_navigation.launch.py
 ```
+
+## Guide SLAM Mapping
+1. Open 4 terminal window
+2. run rviz2
+3. run bringup launcher
+4. run SLAM TOOLBOX
+5. run keyboard controller
+6. Drive the robot into undifined area
+7. Save map using SLAM TOOLBOX Plugin
+
+## Guide Localization 
+1. Makesure Bringup node, keyboard controller and Rviz2 program already running
+2. Intrupt terminal who running the SLAM TOOLBOX using CTRL+C
+3. From that terminal you can launch SLAM TOOLBOX Localization from generated map
+
+## Guide Autonomous Navigation
+1. Makesure Bringup node, SLAM TOOLBOX Localization from generated map, and Rviz2 already running.
+2. Open new terminal and then run Autonomous Navigation with nav2
