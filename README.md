@@ -165,6 +165,14 @@ ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r cmd_vel:=cmd_
 # , = Reverse
 ```
 
+## Display Rviz for SLAM & Nav2
+```bash
+# Open new terminal
+cd ~agv_ws
+. install/setup.bash
+rviz2 -d /home/ksr/agv_ws/src/agv_origin_description/config/display.rviz
+```
+
 ## Bringup all important nodes
 this is important part to run SLAM!
 ```bash
