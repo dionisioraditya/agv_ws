@@ -170,7 +170,7 @@ ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r cmd_vel:=cmd_
 # Open new terminal
 cd ~agv_ws
 . install/setup.bash
-rviz2 -d /home/ksr/agv_ws/src/agv_origin_description/config/display.rviz
+rviz2 -d /home/ksr/agv_ws/src/agv_origin_description/config/slam_tool_box.rviz
 ```
 
 ## Bringup all important nodes
@@ -224,7 +224,7 @@ ros2 launch agv_controller agv_navigation.launch.py
 
 ## Guide Localization 
 1. Makesure Bringup node, keyboard controller and Rviz2 program already running
-2. Intrupt terminal who running the SLAM TOOLBOX using CTRL+C
+2. Intrupt terminal where running the SLAM TOOLBOX using CTRL+C
 3. From that terminal you can launch SLAM TOOLBOX Localization from generated map
 
 ## Guide Autonomous Navigation
