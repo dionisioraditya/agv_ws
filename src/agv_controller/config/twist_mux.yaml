@@ -5,6 +5,10 @@ twist_mux:
         topic   : cmd_vel_nav
         timeout : 0.5
         priority: 10
+      docking:
+        topic   : cmd_vel_dock
+        timeout : 0.5
+        priority: 50
       keyboard:
         topic   : cmd_vel_key
         timeout : 0.5
