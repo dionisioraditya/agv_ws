@@ -25,6 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             'mission_manager = agv_scene.mission_manager:main',
+            'mission_managerv2 = agv_scene.mission_manager_v2:main',
         ],
     },
 )
