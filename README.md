@@ -230,3 +230,28 @@ ros2 launch agv_controller agv_navigation.launch.py
 ## Guide Autonomous Navigation
 1. Makesure Bringup node, SLAM TOOLBOX Localization from generated map, and Rviz2 already running.
 2. Open new terminal and then run Autonomous Navigation with nav2
+
+# mission manager
+## Cara menjalankan pengujian
+Setiap trial sebaiknya punya experiment_id berbeda.
+
+Misalnya S1 = single objective, trial pertama:
+```bash
+ros2 run agv_scene mission_manager_data \
+--ros-args -p experiment_id:=S1_trial_01
+```
+Kemudian kirim:
+```bash
+ros2 topic pub --once /mission_command \
+std_msgs/msg/String "{data: 'point1'}"
+```
+Untuk multi-objective:
+```bash
+ros2 run agv_scene mission_manager_data \
+--ros-args -p experiment_id:=S2_trial_01
+```
+```bash
+ros2 topic pub --once /mission_command \
+std_msgs/msg/String \
+"{data: 'point1,point2,home'}"
+```

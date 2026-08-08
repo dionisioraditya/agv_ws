@@ -71,7 +71,7 @@ class MissionManager(Node):
 
         self.declare_parameter(
             'log_directory',
-            str(Path.home() / 'agv_experiment_logs')
+            str(Path.home() / 'agv_ws' / 'experiment_logs')
         )
 
         self.experiment_id = (
