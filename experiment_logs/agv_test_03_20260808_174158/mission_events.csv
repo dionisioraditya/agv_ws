@@ -1,0 +1,20 @@
+timestamp,monotonic_time_s,experiment_id,mission_id,state,event,current_objective,remaining_objectives,mission_queue_size,distance_remaining_m,note
+2026-08-08T17:41:58.860,1407.022574,agv_test_03,,IDLE,STATE_TRANSITION,,[],0,,IDLE -> IDLE. Mission Manager initialized
+2026-08-08T17:42:19.768,1427.930404,agv_test_03,,IDLE,MISSION_ENQUEUED,,[],1,,"mission_001: ['point2', 'point1', 'home']"
+2026-08-08T17:42:19.770,1427.932317,agv_test_03,mission_001,IDLE,MISSION_STARTED,,"[""point2"", ""point1"", ""home""]",0,,Queue wait: 0.003843 s
+2026-08-08T17:42:19.771,1427.933417,agv_test_03,mission_001,MISSION_RECEIVED,STATE_TRANSITION,,"[""point2"", ""point1"", ""home""]",0,,IDLE -> MISSION_RECEIVED. mission_001 started
+2026-08-08T17:42:19.772,1427.934757,agv_test_03,mission_001,MISSION_RECEIVED,OBJECTIVE_SELECTED,point2,"[""point1"", ""home""]",0,,Transition latency: 0.000000 s
+2026-08-08T17:42:19.773,1427.936065,agv_test_03,mission_001,MISSION_RECEIVED,GOAL_SENT,point2,"[""point1"", ""home""]",0,,Goal sent to point2
+2026-08-08T17:42:19.778,1427.940587,agv_test_03,mission_001,MISSION_RECEIVED,GOAL_ACCEPTED,point2,"[""point1"", ""home""]",0,,
+2026-08-08T17:42:19.779,1427.941814,agv_test_03,mission_001,NAVIGATING,STATE_TRANSITION,point2,"[""point1"", ""home""]",0,,MISSION_RECEIVED -> NAVIGATING. Navigating to point2
+2026-08-08T17:42:58.468,1466.630964,agv_test_03,mission_001,NAVIGATING,OBJECTIVE_SUCCEEDED,point2,"[""point1"", ""home""]",0,0.251,Execution time: 38.697164 s
+2026-08-08T17:42:58.476,1466.638634,agv_test_03,mission_001,NAVIGATING,OBJECTIVE_SELECTED,point1,"[""home""]",0,,Transition latency: 0.000008 s
+2026-08-08T17:42:58.477,1466.639958,agv_test_03,mission_001,NAVIGATING,GOAL_SENT,point1,"[""home""]",0,,Goal sent to point1
+2026-08-08T17:42:58.482,1466.644619,agv_test_03,mission_001,NAVIGATING,GOAL_ACCEPTED,point1,"[""home""]",0,,
+2026-08-08T17:43:14.803,1482.965327,agv_test_03,mission_001,NAVIGATING,OBJECTIVE_SUCCEEDED,point1,"[""home""]",0,0.247,Execution time: 16.333874 s
+2026-08-08T17:43:14.804,1482.966922,agv_test_03,mission_001,NAVIGATING,OBJECTIVE_SELECTED,home,[],0,,Transition latency: 0.000006 s
+2026-08-08T17:43:14.805,1482.968093,agv_test_03,mission_001,NAVIGATING,GOAL_SENT,home,[],0,,Goal sent to home
+2026-08-08T17:43:14.815,1482.977538,agv_test_03,mission_001,NAVIGATING,GOAL_ACCEPTED,home,[],0,,
+2026-08-08T17:43:48.077,1516.240095,agv_test_03,mission_001,NAVIGATING,OBJECTIVE_SUCCEEDED,home,[],0,0.234,Execution time: 33.274447 s
+2026-08-08T17:43:48.079,1516.241277,agv_test_03,mission_001,MISSION_COMPLETED,STATE_TRANSITION,,[],0,,NAVIGATING -> MISSION_COMPLETED. mission_001 completed
+2026-08-08T17:43:48.080,1516.243061,agv_test_03,,IDLE,STATE_TRANSITION,,[],0,,MISSION_COMPLETED -> IDLE. mission_001 finished

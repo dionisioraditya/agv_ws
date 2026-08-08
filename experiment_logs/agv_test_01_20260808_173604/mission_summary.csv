@@ -1,0 +1,2 @@
+experiment_id,mission_id,total_objectives,completed_objectives,objective_completion_rate_percent,mission_status,queue_wait_time_s,dispatch_latency_s,mission_execution_time_s
+agv_test_01,mission_001,1,1,100.00,COMPLETED,0.005997,0.024955,33.116939

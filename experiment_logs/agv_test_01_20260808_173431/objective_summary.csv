@@ -1,0 +1,2 @@
+experiment_id,mission_id,objective,status,execution_time_s,transition_latency_s
+agv_test_01,mission_001,point1,FAILED,29.535259,0.000000

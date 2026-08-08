@@ -1,0 +1,12 @@
+timestamp,monotonic_time_s,experiment_id,mission_id,state,event,current_objective,remaining_objectives,mission_queue_size,distance_remaining_m,note
+2026-08-08T17:34:31.702,959.865180,agv_test_01,,IDLE,STATE_TRANSITION,,[],0,,IDLE -> IDLE. Mission Manager initialized
+2026-08-08T17:34:43.858,972.020620,agv_test_01,,IDLE,MISSION_ENQUEUED,,[],1,,mission_001: ['point1']
+2026-08-08T17:34:43.859,972.022168,agv_test_01,mission_001,IDLE,MISSION_STARTED,,"[""point1""]",0,,Queue wait: 0.001711 s
+2026-08-08T17:34:43.861,972.023323,agv_test_01,mission_001,MISSION_RECEIVED,STATE_TRANSITION,,"[""point1""]",0,,IDLE -> MISSION_RECEIVED. mission_001 started
+2026-08-08T17:34:43.862,972.024501,agv_test_01,mission_001,MISSION_RECEIVED,OBJECTIVE_SELECTED,point1,[],0,,Transition latency: 0.000000 s
+2026-08-08T17:34:43.863,972.025748,agv_test_01,mission_001,MISSION_RECEIVED,GOAL_SENT,point1,[],0,,Goal sent to point1
+2026-08-08T17:34:43.876,972.038534,agv_test_01,mission_001,MISSION_RECEIVED,GOAL_ACCEPTED,point1,[],0,,
+2026-08-08T17:34:43.885,972.047753,agv_test_01,mission_001,NAVIGATING,STATE_TRANSITION,point1,[],0,,MISSION_RECEIVED -> NAVIGATING. Navigating to point1
+2026-08-08T17:35:13.396,1001.559039,agv_test_01,mission_001,NAVIGATING,OBJECTIVE_FAILED,point1,[],0,0.253,Execution time: 29.535259 s
+2026-08-08T17:35:13.398,1001.560977,agv_test_01,mission_001,MISSION_FAILED,STATE_TRANSITION,,[],0,,NAVIGATING -> MISSION_FAILED. Navigation aborted
+2026-08-08T17:35:13.400,1001.562828,agv_test_01,,IDLE,STATE_TRANSITION,,[],0,,MISSION_FAILED -> IDLE. mission_001 terminated
