@@ -26,6 +26,7 @@ setup(
         'console_scripts': [
             'mission_manager = agv_scene.mission_manager:main',
             'mission_managerv2 = agv_scene.mission_manager_v2:main',
+            'mission_manager_data = agv_scene.mission_manager_data:main',
         ],
     },
 )
