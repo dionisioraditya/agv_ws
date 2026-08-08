@@ -1,0 +1,2 @@
+experiment_id,mission_id,total_objectives,completed_objectives,objective_completion_rate_percent,mission_status,queue_wait_time_s,dispatch_latency_s,mission_execution_time_s
+S2_trial_01,mission_001,3,3,100.00,COMPLETED,0.001747,0.006099,89.369824

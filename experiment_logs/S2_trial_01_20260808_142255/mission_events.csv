@@ -1,0 +1,20 @@
+timestamp,monotonic_time_s,experiment_id,mission_id,state,event,current_objective,remaining_objectives,mission_queue_size,distance_remaining_m,note
+2026-08-08T14:22:55.725,1864.674630,S2_trial_01,,IDLE,STATE_TRANSITION,,[],0,,IDLE -> IDLE. Mission Manager initialized
+2026-08-08T14:23:05.856,1874.804991,S2_trial_01,,IDLE,MISSION_ENQUEUED,,[],1,,"mission_001: ['point1', 'point2', 'home']"
+2026-08-08T14:23:05.857,1874.806221,S2_trial_01,mission_001,IDLE,MISSION_STARTED,,"[""point1"", ""point2"", ""home""]",0,,Queue wait: 0.001747 s
+2026-08-08T14:23:05.858,1874.807158,S2_trial_01,mission_001,MISSION_RECEIVED,STATE_TRANSITION,,"[""point1"", ""point2"", ""home""]",0,,IDLE -> MISSION_RECEIVED. mission_001 started
+2026-08-08T14:23:05.860,1874.809221,S2_trial_01,mission_001,MISSION_RECEIVED,OBJECTIVE_SELECTED,point1,"[""point2"", ""home""]",0,,Transition latency: 0.000000 s
+2026-08-08T14:23:05.862,1874.811489,S2_trial_01,mission_001,MISSION_RECEIVED,GOAL_SENT,point1,"[""point2"", ""home""]",0,,Goal sent to point1
+2026-08-08T14:23:05.876,1874.825737,S2_trial_01,mission_001,MISSION_RECEIVED,GOAL_ACCEPTED,point1,"[""point2"", ""home""]",0,,
+2026-08-08T14:23:05.879,1874.828581,S2_trial_01,mission_001,NAVIGATING,STATE_TRANSITION,point1,"[""point2"", ""home""]",0,,MISSION_RECEIVED -> NAVIGATING. Navigating to point1
+2026-08-08T14:23:38.778,1907.727255,S2_trial_01,mission_001,NAVIGATING,OBJECTIVE_SUCCEEDED,point1,"[""point2"", ""home""]",0,0.253,Execution time: 32.919725 s
+2026-08-08T14:23:38.779,1907.728473,S2_trial_01,mission_001,NAVIGATING,OBJECTIVE_SELECTED,point2,"[""home""]",0,,Transition latency: 0.000008 s
+2026-08-08T14:23:38.780,1907.729564,S2_trial_01,mission_001,NAVIGATING,GOAL_SENT,point2,"[""home""]",0,,Goal sent to point2
+2026-08-08T14:23:38.782,1907.731534,S2_trial_01,mission_001,NAVIGATING,GOAL_ACCEPTED,point2,"[""home""]",0,,
+2026-08-08T14:23:53.711,1922.660687,S2_trial_01,mission_001,NAVIGATING,OBJECTIVE_SUCCEEDED,point2,"[""home""]",0,0.250,Execution time: 14.933111 s
+2026-08-08T14:23:53.712,1922.661935,S2_trial_01,mission_001,NAVIGATING,OBJECTIVE_SELECTED,home,[],0,,Transition latency: 0.000006 s
+2026-08-08T14:23:53.714,1922.663143,S2_trial_01,mission_001,NAVIGATING,GOAL_SENT,home,[],0,,Goal sent to home
+2026-08-08T14:23:53.749,1922.698043,S2_trial_01,mission_001,NAVIGATING,GOAL_ACCEPTED,home,[],0,0.250,
+2026-08-08T14:24:35.224,1964.173748,S2_trial_01,mission_001,NAVIGATING,OBJECTIVE_SUCCEEDED,home,[],0,0.231,Execution time: 41.512755 s
+2026-08-08T14:24:35.226,1964.174955,S2_trial_01,mission_001,MISSION_COMPLETED,STATE_TRANSITION,,[],0,,NAVIGATING -> MISSION_COMPLETED. mission_001 completed
+2026-08-08T14:24:35.228,1964.177238,S2_trial_01,,IDLE,STATE_TRANSITION,,[],0,,MISSION_COMPLETED -> IDLE. mission_001 finished
