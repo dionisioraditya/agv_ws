@@ -1,0 +1,9 @@
+experiment_id,mission_id,objective,status,execution_time_s,transition_latency_s
+exp1,mission_001,point1,SUCCEEDED,31.478197,0.000000
+exp1,mission_002,point1,SUCCEEDED,0.130658,0.000000
+exp1,mission_002,point2,SUCCEEDED,15.940180,0.000008
+exp1,mission_002,point3,SUCCEEDED,7.635121,0.000008
+exp1,mission_003,point2,SUCCEEDED,15.040576,0.000000
+exp1,mission_003,point1,SUCCEEDED,18.336282,0.000011
+exp1,mission_003,home,SUCCEEDED,33.076217,0.000008
+exp1,mission_004,point1,CANCELED,11.090419,0.000000
