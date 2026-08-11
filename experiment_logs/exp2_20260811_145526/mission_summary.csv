@@ -1,0 +1,6 @@
+experiment_id,mission_id,total_objectives,completed_objectives,objective_completion_rate_percent,mission_status,queue_wait_time_s,dispatch_latency_s,mission_execution_time_s
+exp2,mission_001,1,1,100.00,COMPLETED,0.001735,0.008120,31.959238
+exp2,mission_002,2,2,100.00,COMPLETED,0.001615,0.004288,23.949968
+exp2,mission_003,3,3,100.00,COMPLETED,0.002216,0.013835,66.350288
+exp2,mission_004,1,0,0.00,CANCELED,0.001633,0.003652,8.976936
+exp2,mission_005,1,0,0.00,FAILED,0.001684,0.004004,31.341077
