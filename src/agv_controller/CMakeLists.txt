@@ -22,6 +22,7 @@ install(
 install(PROGRAMS
   ${PROJECT_NAME}/simple_controller.py
   ${PROJECT_NAME}/odom_translator.py
+  ${PROJECT_NAME}/keyboard_teleop.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

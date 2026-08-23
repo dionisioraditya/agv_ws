@@ -1,0 +1,570 @@
+<?xml version="1.0"?>
+<robot name="agv" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:include filename="$(find agv_description)/urdf/agv_gazebo.xacro" />
+
+    <!-- Base Footprint (Dummy Root Link for KDL & TF, oriented +X Forward, +Y Left) -->
+    <link name="base_footprint" />
+    <joint name="base_footprint_joint" type="fixed">
+        <parent link="base_footprint" />
+        <child link="base_link-v3" />
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 1.5707963267948966" />
+    </joint>
+
+    <!-- Base Link -->
+    <link name="base_link-v3">
+        <inertial>
+            <origin xyz="-9.144598299994634e-17 0.002329246456069943 0.07000000000000003" rpy="0.0 0.0 0.0" />
+            <mass value="18.737706807101656" />
+            <inertia ixx="0.258571423822279" iyy="0.25867308317167087" izz="0.42099721993587347" ixy="-6.436933293327782e-16" iyz="1.7867651802561113e-16" ixz="1.5421392163261763e-16" />
+        </inertial>
+        <visual name="base_link-v3_visual">
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/base_link-v3.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="base_link-v3_collision">
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/base_link-v3.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Left Wheel Bracket -->
+    <link name="wheel_bracket_left-v4">
+        <inertial>
+            <origin xyz="-0.045999999120838846 -0.0033720412069417095 0.008724595117188476" rpy="0.0 -0.0 0.0" />
+            <mass value="0.3509263248295687" />
+            <inertia ixx="0.00014120974830058274" iyy="0.00032735664316671347" izz="0.00029123782398508477" ixy="4.098188802204028e-12" iyz="-2.0023089120277762e-05" ixz="1.4896190292552902e-12" />
+        </inertial>
+        <visual name="wheel_bracket_left-v4_visual">
+            <origin xyz="-0.046000000586332156 0.029900000000000055 0.04350000109083593" rpy="3.141592653589793 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/wheel_bracket_left-v4.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="wheel_bracket_left-v4_collision">
+            <origin xyz="-0.046000000586332156 0.029900000000000055 0.04350000109083593" rpy="3.141592653589793 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/wheel_bracket_left-v4.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Right Wheel Bracket -->
+    <link name="wheel_bracket_right-v1">
+        <inertial>
+            <origin xyz="-0.0033720412069417807 -0.04600000087916113 0.008724595117188476" rpy="0.0 -0.0 0.0" />
+            <mass value="0.3509263248295687" />
+            <inertia ixx="0.0003273566431667139" iyy="0.00014120974830058013" izz="0.0002912378239850813" ixy="-4.098189669565766e-12" iyz="-1.4896189750451816e-12" ixz="-2.0023089120277545e-05" />
+        </inertial>
+        <visual name="wheel_bracket_right-v1_visual">
+            <origin xyz="0.029899999999999986 -0.04599999941366782 0.04350000109083593" rpy="3.141592653589793 -0.0 -1.5707963267948966" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/wheel_bracket_right-v1.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="wheel_bracket_right-v1_collision">
+            <origin xyz="0.029899999999999986 -0.04599999941366782 0.04350000109083593" rpy="3.141592653589793 -0.0 -1.5707963267948966" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/wheel_bracket_right-v1.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Left Wheel -->
+    <link name="wheel_left-v2">
+        <inertial>
+            <origin xyz="0.013500000000000227 1.0908359282524316e-09 -5.863359930913248e-10" rpy="0.0 -0.0 0.0" />
+            <mass value="2.1467344548810208" />
+            <inertia ixx="0.003514204302653621" iyy="0.0018875162694474423" izz="0.0018875162694742265" ixy="0.0" iyz="-3.469446951953614e-18" ixz="2.0816681711721685e-17" />
+        </inertial>
+        <visual name="wheel_left-v2_visual">
+            <origin xyz="0.027000000000000243 1.090835946016e-09 -5.86331765362047e-10" rpy="1.5707963267948966 -1.5707963267948835 0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/wheel_left-v2.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="wheel_left-v2_collision">
+            <origin xyz="0.027000000000000243 1.090835946016e-09 -5.86331765362047e-10" rpy="1.5707963267948966 -1.5707963267948835 0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/wheel_left-v2.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Right Wheel -->
+    <link name="wheel_right-v1">
+        <inertial>
+            <origin xyz="-0.013500000000000014 1.0908359282524316e-09 5.863365792890818e-10" rpy="0.0 -0.0 0.0" />
+            <mass value="2.1467344548810208" />
+            <inertia ixx="0.0035142043026536174" iyy="0.0018875162694474562" izz="0.0018875162694742403" ixy="0.0" iyz="3.469446951953614e-18" ixz="-3.469446951953614e-17" />
+        </inertial>
+        <visual name="wheel_right-v1_visual">
+            <origin xyz="-0.027000000000000027 1.090835946016e-09 5.863328667032874e-10" rpy="1.5707963267948966 1.5707963267948724 0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/wheel_right-v1.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="wheel_right-v1_collision">
+            <origin xyz="-0.027000000000000027 1.090835946016e-09 5.863328667032874e-10" rpy="1.5707963267948966 1.5707963267948724 0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/wheel_right-v1.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Caster Bracket Left -->
+    <link name="castrol_bracket_left-v2">
+        <inertial>
+            <origin xyz="-0.023000000000001554 0.0 -0.020256605988607356" rpy="0.0 -0.0 0.0" />
+            <mass value="0.27969662131990614" />
+            <inertia ixx="0.00012937153882972745" iyy="7.518000791357799e-05" izz="8.889668104064812e-05" ixy="4.336808689942018e-19" iyz="-1.6263032587282567e-19" ixz="-4.228388472693467e-18" />
+        </inertial>
+        <visual name="castrol_bracket_left-v2_visual">
+            <origin xyz="-0.023000000000000007 0.0 -0.0386" rpy="0.0 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/castrol_bracket_left-v2.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="castrol_bracket_left-v2_collision">
+            <origin xyz="-0.023000000000000007 0.0 -0.0386" rpy="0.0 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/castrol_bracket_left-v2.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Caster Bracket Right -->
+    <link name="castrol_bracket_right-v1">
+        <inertial>
+            <origin xyz="0.022999999999998463 0.0 -0.020256605988607356" rpy="0.0 -0.0 0.0" />
+            <mass value="0.27969662131990614" />
+            <inertia ixx="0.00012937153882972745" iyy="7.518000791357799e-05" izz="8.889668104064812e-05" ixy="0.0" iyz="-1.6263032587282567e-19" ixz="-4.228388472693467e-18" />
+        </inertial>
+        <visual name="castrol_bracket_right-v1_visual">
+            <origin xyz="0.023000000000000007 0.0 -0.0386" rpy="0.0 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/castrol_bracket_right-v1.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="castrol_bracket_right-v1_collision">
+            <origin xyz="0.023000000000000007 0.0 -0.0386" rpy="0.0 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/castrol_bracket_right-v1.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Caster Housing Left -->
+    <link name="castrol_housing_left_link-v3">
+        <inertial>
+            <origin xyz="1.1038281400033156e-13 -1.7763568394002505e-17 0.0007862826516873156" rpy="0.0 -0.0 0.0" />
+            <mass value="0.025535252486470192" />
+            <inertia ixx="5.568350469902948e-06" iyy="3.878187679808454e-06" izz="9.422668804974109e-06" ixy="0.0" iyz="0.0" ixz="-6.342582709040201e-18" />
+        </inertial>
+        <visual name="castrol_housing_left_link-v3_visual">
+            <origin xyz="0.0 0.0 -0.001999999999999993" rpy="3.141592653589793 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/castrol_housing_left_link-v3.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="castrol_housing_left_link-v3_collision">
+            <origin xyz="0.0 0.0 -0.001999999999999993" rpy="3.141592653589793 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/castrol_housing_left_link-v3.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Caster Housing Right -->
+    <link name="castrol_housing_right_link-v1">
+        <inertial>
+            <origin xyz="1.1038281400033156e-13 -1.7763568394002505e-17 0.0007862826516873156" rpy="0.0 -0.0 0.0" />
+            <mass value="0.025535252486470192" />
+            <inertia ixx="5.568350469902948e-06" iyy="3.878187679808129e-06" izz="9.422668804973783e-06" ixy="-5.421010862427522e-20" iyz="0.0" ixz="-6.315477654728063e-18" />
+        </inertial>
+        <visual name="castrol_housing_right_link-v1_visual">
+            <origin xyz="0.0 0.0 -0.001999999999999993" rpy="3.141592653589793 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/castrol_housing_right_link-v1.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="castrol_housing_right_link-v1_collision">
+            <origin xyz="0.0 0.0 -0.001999999999999993" rpy="3.141592653589793 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/castrol_housing_right_link-v1.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Caster Yaw Link Left -->
+    <link name="castrol_yaw_link_left-v3">
+        <inertial>
+            <origin xyz="1.3981704682919373e-13 -0.010529067113429482 0.010193003401893082" rpy="0.0 -0.0 0.0" />
+            <mass value="0.0188615130943029" />
+            <inertia ixx="4.302492366247058e-06" iyy="4.136763836895389e-06" izz="4.254558040100705e-06" ixy="-2.3852447794681098e-17" iyz="1.4393546087675997e-06" ixz="3.678155870157074e-17" />
+        </inertial>
+        <visual name="castrol_yaw_link_left-v3_visual">
+            <origin xyz="0.0 0.0 -0.0042999999038875105" rpy="3.141592653589793 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/castrol_yaw_link_left-v3.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="castrol_yaw_link_left-v3_collision">
+            <origin xyz="0.0 0.0 -0.0042999999038875105" rpy="3.141592653589793 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/castrol_yaw_link_left-v3.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Caster Yaw Link Right -->
+    <link name="castrol_yaw_link_right-v1">
+        <inertial>
+            <origin xyz="1.3983481039758771e-13 -0.010529067113429482 0.010193003401893082" rpy="0.0 -0.0 0.0" />
+            <mass value="0.0188615130943029" />
+            <inertia ixx="4.302492366247058e-06" iyy="4.13676383689528e-06" izz="4.254558040100596e-06" ixy="-2.3852447794681098e-17" iyz="1.4393546087675997e-06" ixz="3.6808663755882876e-17" />
+        </inertial>
+        <visual name="castrol_yaw_link_right-v1_visual">
+            <origin xyz="0.0 0.0 -0.0042999999038875105" rpy="3.141592653589793 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/castrol_yaw_link_right-v1.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="castrol_yaw_link_right-v1_collision">
+            <origin xyz="0.0 0.0 -0.0042999999038875105" rpy="3.141592653589793 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/castrol_yaw_link_right-v1.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Caster Wheel Left -->
+    <link name="castrol_wheel_left-v2">
+        <inertial>
+            <origin xyz="6.526708684617689e-10 -5.587722817779195e-10 -0.010999999828636736" rpy="0.0 -0.0 0.0" />
+            <mass value="0.3050766908232872" />
+            <inertia ixx="5.814269211947085e-05" iyy="5.8142692138857255e-05" izz="9.435495222036858e-05" ixy="0.0" iyz="0.0" ixz="-4.336808689942018e-19" />
+        </inertial>
+        <visual name="castrol_wheel_left-v2_visual">
+            <origin xyz="6.526708595799847e-10 -5.587935447692871e-10 1.713632613586924e-10" rpy="-1.5707963267948966 4.3021142204224816e-15 -1.5707963267948966" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/castrol_wheel_left-v2.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="castrol_wheel_left-v2_collision">
+            <origin xyz="6.526708595799847e-10 -5.587935447692871e-10 1.713632613586924e-10" rpy="-1.5707963267948966 4.3021142204224816e-15 -1.5707963267948966" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/castrol_wheel_left-v2.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Caster Wheel Right -->
+    <link name="castrol_wheel_right-v1">
+        <inertial>
+            <origin xyz="6.526708684617689e-10 5.588146212431866e-10 -0.010999999828636522" rpy="0.0 -0.0 0.0" />
+            <mass value="0.3050766908232872" />
+            <inertia ixx="5.814269211947259e-05" iyy="5.814269213885812e-05" izz="9.435495222036901e-05" ixy="4.336808689942018e-19" iyz="-4.336808689942018e-19" ixz="-4.336808689942018e-19" />
+        </inertial>
+        <visual name="castrol_wheel_right-v1_visual">
+            <origin xyz="6.526708595799847e-10 5.58793491478582e-10 1.7136347452151312e-10" rpy="-1.5707963267948966 -8.076872504148012e-15 -1.5707963267948966" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/castrol_wheel_right-v1.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="castrol_wheel_right-v1_collision">
+            <origin xyz="6.526708595799847e-10 5.58793491478582e-10 1.7136347452151312e-10" rpy="-1.5707963267948966 -8.076872504148012e-15 -1.5707963267948966" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/castrol_wheel_right-v1.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Camera Base -->
+    <link name="camera_base-v3">
+        <inertial>
+            <origin xyz="-0.00021774062619158517 0.02240063941702923 0.02872700853338035" rpy="0.0 -0.0 0.0" />
+            <mass value="1.734307822073494" />
+            <inertia ixx="0.0006490780464152579" iyy="0.0033225241674660067" izz="0.0033138438872619344" ixy="-3.7387712473399017e-06" iyz="7.22687957245352e-05" ixz="2.1045248910028737e-06" />
+        </inertial>
+        <visual name="camera_base-v3_visual">
+            <origin xyz="0.0 0.0 0.03500000052154064" rpy="0.0 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/camera_base-v3.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="camera_base-v3_collision">
+            <origin xyz="0.0 0.0 0.03500000052154064" rpy="0.0 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/camera_base-v3.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Camera Lens 1 -->
+    <link name="camera_lens_1-v2">
+        <inertial>
+            <origin xyz="8.385545546829576e-10 -5.37186863880379e-10 0.007357859531772508" rpy="0.0 -0.0 0.0" />
+            <mass value="0.01843447299218361" />
+            <inertia ixx="5.843967059460673e-07" iyy="5.843967348412478e-07" izz="4.450553286600156e-07" ixy="0.0" iyz="0.0" ixz="2.4597836788264882e-17" />
+        </inertial>
+        <visual name="camera_lens_1-v2_visual">
+            <origin xyz="8.381903171539307e-10 -5.37186863880379e-10 1.7763568394002505e-17" rpy="1.5707963267948968 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/camera_lens_1-v2.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="camera_lens_1-v2_collision">
+            <origin xyz="8.381903171539307e-10 -5.37186863880379e-10 1.7763568394002505e-17" rpy="1.5707963267948968 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/camera_lens_1-v2.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Camera Lens 2 -->
+    <link name="camera_lens_2-v1">
+        <inertial>
+            <origin xyz="-2.790325326351706e-10 -5.37186863880379e-10 0.007357859531772508" rpy="0.0 -0.0 0.0" />
+            <mass value="0.01843447299218361" />
+            <inertia ixx="5.843967059460673e-07" iyy="5.843967348411936e-07" izz="4.450553286600156e-07" ixy="0.0" iyz="0.0" ixz="2.461138931542095e-17" />
+        </inertial>
+        <visual name="camera_lens_2-v1_visual">
+            <origin xyz="-2.7939677238464354e-10 -5.37186863880379e-10 1.7763568394002505e-17" rpy="1.5707963267948968 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/camera_lens_2-v1.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="camera_lens_2-v1_collision">
+            <origin xyz="-2.7939677238464354e-10 -5.37186863880379e-10 1.7763568394002505e-17" rpy="1.5707963267948968 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/camera_lens_2-v1.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Camera Lens 3 -->
+    <link name="camera_lens_3-v1">
+        <inertial>
+            <origin xyz="3.6424641081111987e-13 -5.21540641784668e-10 0.007357859531772508" rpy="0.0 -0.0 0.0" />
+            <mass value="0.01843447299218361" />
+            <inertia ixx="5.843967059461757e-07" iyy="5.843967348411936e-07" izz="4.450553286600156e-07" ixy="-4.0657581468206416e-20" iyz="5.421010862427522e-20" ixz="2.462494184257702e-17" />
+        </inertial>
+        <visual name="camera_lens_3-v1_visual">
+            <origin xyz="4.440892098500626e-18 -5.21540641784668e-10 1.7763568394002505e-17" rpy="1.5707963267948968 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/camera_lens_3-v1.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="camera_lens_3-v1_collision">
+            <origin xyz="4.440892098500626e-18 -5.21540641784668e-10 1.7763568394002505e-17" rpy="1.5707963267948968 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/camera_lens_3-v1.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Lidar Housing -->
+    <link name="lidar_housing-v2">
+        <inertial>
+            <origin xyz="1.2288512826363713e-16 9.557732198282887e-17 0.06925" rpy="0.0 -0.0 0.0" />
+            <mass value="0.653616527770587" />
+            <inertia ixx="0.0002527381240664435" iyy="0.00025273812406646085" izz="0.0004681928720279981" ixy="2.677325028344065e-18" iyz="8.455884881186637e-19" ixz="7.429576953654751e-19" />
+        </inertial>
+        <visual name="lidar_housing-v2_visual">
+            <origin xyz="0.0 0.0 0.06" rpy="0.0 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/lidar_housing-v2.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="lidar_housing-v2_collision">
+            <origin xyz="0.0 0.0 0.06" rpy="0.0 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/lidar_housing-v2.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Lidar Head -->
+    <link name="lidar_head-v2">
+        <inertial>
+            <origin xyz="1.91339268403089e-17 5.039251176166543e-17 0.010883967161803731" rpy="0.0 -0.0 0.0" />
+            <mass value="0.6996276955297573" />
+            <inertia ixx="0.00024900470389238594" iyy="0.00024900470389238594" izz="0.0004412989163007248" ixy="1.784883352229373e-19" iyz="1.2926095930670143e-19" ixz="3.0544664847438865e-19" />
+        </inertial>
+        <visual name="lidar_head-v2_visual">
+            <origin xyz="0.0 3.763656053479283e-17 -0.018599999999999995" rpy="0.0 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/lidar_head-v2.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="lidar_head-v2_collision">
+            <origin xyz="0.0 3.763656053479283e-17 -0.018599999999999995" rpy="0.0 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/lidar_head-v2.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- IMU Link -->
+    <link name="imu_link-v1">
+        <inertial>
+            <origin xyz="0.0 0.0 -0.03425000000000001" rpy="0.0 -0.0 0.0" />
+            <mass value="0.010161354000000003" />
+            <inertia ixx="6.100961619549952e-07" iyy="8.798801106549986e-07" izz="1.4861657648600001e-06" ixy="0.0" iyz="0.0" ixz="0.0" />
+        </inertial>
+        <visual name="imu_link-v1_visual">
+            <origin xyz="-0.016100000000000003 -0.0134 -0.035" rpy="0.0 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/imu_link-v1.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="imu_link-v1_collision">
+            <origin xyz="-0.016100000000000003 -0.0134 -0.035" rpy="0.0 -0.0 0.0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/imu_link-v1.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- ==================== JOINTS ==================== -->
+    <joint name="base_link-v3_Rigid-1" type="fixed">
+        <origin xyz="0.15 0.15 0.0" rpy="3.141592653589793 -0.0 1.5707963267948966" />
+        <parent link="base_link-v3" />
+        <child link="wheel_bracket_left-v4" />
+    </joint>
+
+    <joint name="base_link-v3_Rigid-2" type="fixed">
+        <origin xyz="-0.15 0.15 0.0" rpy="3.141592653589793 -0.0 3.141592653589793" />
+        <parent link="base_link-v3" />
+        <child link="wheel_bracket_right-v1" />
+    </joint>
+
+    <joint name="wheel_bracket_left-v4_Revolute-3" type="continuous">
+        <origin xyz="-0.046 0.007899999999999992 0.0435" rpy="1.5707963267948966 -0.0 1.5707963267948966" />
+        <parent link="wheel_bracket_left-v4" />
+        <child link="wheel_left-v2" />
+        <axis xyz="1.0 0.0 0.0" />
+    </joint>
+
+    <joint name="wheel_bracket_right-v1_Revolute-4" type="continuous">
+        <origin xyz="0.007899999999999992 -0.046 0.0435" rpy="1.5707963267948966 -0.0 3.141592653589793" />
+        <parent link="wheel_bracket_right-v1" />
+        <child link="wheel_right-v1" />
+        <axis xyz="1.0 0.0 0.0" />
+    </joint>
+
+    <joint name="base_link-v3_Rigid-5" type="fixed">
+        <origin xyz="0.15 -0.08 0.0" rpy="0.0 -0.0 0.0" />
+        <parent link="base_link-v3" />
+        <child link="castrol_bracket_left-v2" />
+    </joint>
+
+    <joint name="base_link-v3_Rigid-6" type="fixed">
+        <origin xyz="-0.15 -0.08 0.0" rpy="0.0 -0.0 0.0" />
+        <parent link="base_link-v3" />
+        <child link="castrol_bracket_right-v1" />
+    </joint>
+
+    <joint name="castrol_bracket_left-v2_Rigid-7" type="fixed">
+        <origin xyz="-0.023000000000000007 0.0 -0.0406" rpy="3.141592653589793 -0.0 0.0" />
+        <parent link="castrol_bracket_left-v2" />
+        <child link="castrol_housing_left_link-v3" />
+    </joint>
+
+    <joint name="castrol_bracket_right-v1_Rigid-8" type="fixed">
+        <origin xyz="0.023000000000000007 0.0 -0.0406" rpy="3.141592653589793 -0.0 0.0" />
+        <parent link="castrol_bracket_right-v1" />
+        <child link="castrol_housing_right_link-v1" />
+    </joint>
+
+    <joint name="castrol_housing_left_link-v3_Revolute-9" type="continuous">
+        <origin xyz="0.0 0.0 0.004200000000000008" rpy="0.0 -0.0 0.0" />
+        <parent link="castrol_housing_left_link-v3" />
+        <child link="castrol_yaw_link_left-v3" />
+        <axis xyz="0.0 0.0 1.0" />
+    </joint>
+
+    <joint name="castrol_housing_right_link-v1_Revolute-10" type="continuous">
+        <origin xyz="0.0 0.0 0.004200000000000008" rpy="0.0 -0.0 0.0" />
+        <parent link="castrol_housing_right_link-v1" />
+        <child link="castrol_yaw_link_right-v1" />
+        <axis xyz="0.0 0.0 1.0" />
+    </joint>
+
+    <joint name="castrol_yaw_link_left-v3_Revolute-11" type="continuous">
+        <origin xyz="-0.011499999999999986 -0.025 0.0292" rpy="-3.141592653589793 1.5707963267948966 0" />
+        <parent link="castrol_yaw_link_left-v3" />
+        <child link="castrol_wheel_left-v2" />
+        <axis xyz="0.0 0.0 1.0" />
+    </joint>
+
+    <joint name="castrol_yaw_link_right-v1_Revolute-12" type="continuous">
+        <origin xyz="0.011499999999999986 -0.025 0.0292" rpy="-0.0 1.5707963267948966 0" />
+        <parent link="castrol_yaw_link_right-v1" />
+        <child link="castrol_wheel_right-v1" />
+        <axis xyz="0.0 0.0 1.0" />
+    </joint>
+
+    <joint name="base_link-v3_Rigid-13" type="fixed">
+        <origin xyz="0.0 -0.15 0.14" rpy="0.0 -0.0 0.0" />
+        <parent link="base_link-v3" />
+        <child link="camera_base-v3" />
+    </joint>
+
+    <joint name="camera_base-v3_Rigid-14" type="fixed">
+        <origin xyz="-0.0375 0.0 0.0343" rpy="-1.5707963267948966 -0.0 0.0" />
+        <parent link="camera_base-v3" />
+        <child link="camera_lens_1-v2" />
+    </joint>
+
+    <joint name="camera_base-v3_Rigid-15" type="fixed">
+        <origin xyz="0.0125 0.0 0.0343" rpy="-1.5707963267948966 -0.0 0.0" />
+        <parent link="camera_base-v3" />
+        <child link="camera_lens_2-v1" />
+    </joint>
+
+    <joint name="camera_base-v3_Rigid-16" type="fixed">
+        <origin xyz="0.0375 0.0 0.0343" rpy="-1.5707963267948966 -0.0 0.0" />
+        <parent link="camera_base-v3" />
+        <child link="camera_lens_3-v1" />
+    </joint>
+
+    <joint name="base_link-v3_Rigid-17" type="fixed">
+        <origin xyz="0.0 0.0 0.14" rpy="0.0 -0.0 0.0" />
+        <parent link="base_link-v3" />
+        <child link="lidar_housing-v2" />
+    </joint>
+
+    <joint name="lidar_head_joint" type="fixed">
+        <origin xyz="0.0 0.0 0.07850000000000001" rpy="0.0 0.0 -1.5707963267948966" />
+        <parent link="lidar_housing-v2" />
+        <child link="lidar_head-v2" />
+    </joint>
+
+    <joint name="base_link-v3_Rigid-19" type="fixed">
+        <origin xyz="0.0 0.0 0.14" rpy="0.0 -0.0 0.0" />
+        <parent link="base_link-v3" />
+        <child link="imu_link-v1" />
+    </joint>
+
+    <!-- ==================== ALIAS FRAMES ==================== -->
+    <link name="camera_lens_1" />
+    <joint name="camera_lens_1_alias_joint" type="fixed">
+        <parent link="camera_lens_1-v2" />
+        <child link="camera_lens_1" />
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+    </joint>
+
+    <link name="imu_link" />
+    <joint name="imu_link_alias_joint" type="fixed">
+        <parent link="imu_link-v1" />
+        <child link="imu_link" />
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+    </joint>
+
+</robot>

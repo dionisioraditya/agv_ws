@@ -1,7 +1,7 @@
 slam_toolbox:
   ros__parameters:
     mode: localization
-    map_file_name: /home/ksr/agv_ws/src/agv_origin_description/maps/map_lab
+    map_file_name: /home/diordty/agv_ws/src/agv_description/maps/map_lab
     odom_frame: odom
     map_frame: map
     base_frame: base_footprint

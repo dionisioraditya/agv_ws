@@ -1,257 +1,222 @@
-<h1 align="center">🌐 Robotic UAJY – Autonomous Mobile Robot (AMR)/ Automated Guided Vehicle (AGV) Workspace</h1>
+<h1 align="center">🌐 Robotic UAJY – Autonomous Mobile Robot (AMR) / AGV Workspace</h1>
 
 <p align="center">
-  Repository ini berisi <b>source code</b> dan konfigurasi <b>robot AMR/ AGV KSR</b> yang dikembangkan menggunakan <b>ROS2 Humble</b>.<br>
-  Digunakan untuk keperluan <b>simulasi, penelitian, dan pengembangan path planning</b> sistem robotika.
+  Repository ini berisi <b>source code</b>, model 3D CAD/URDF terbaru (Fusion 360), dan konfigurasi <b>Robot AMR/AGV</b> yang dikembangkan menggunakan <b>ROS 2 Humble</b>.<br>
+  Mendukung penuh <b>Simulasi Gazebo Classic</b> dan <b>Robot Fisik (Real-World)</b> dengan <b>SLAM Toolbox</b>, <b>Nav2</b>, serta <b>Custom Planners</b>.
 </p>
 
 ---
 
-## 🎯 Goals
-Repository ini bertujuan untuk:
-- 🧠 Menyediakan lingkungan simulasi <b>AMR/ AGV</b> berbasis framework ROS2.  
-- 🤖 Menjadi platform <b>Research & Development</b> untuk algoritma **path planning** dan **AI navigation**.  
-- 🔧 Menjadi pondasi untuk integrasi robot fisik berbasis **Jetson Orin + ROS2**.
+## 🎯 Fitur Utama & Pembaharuan Terbaru
+- 🦾 **Model URDF & Visual STL Presisi:** Di-export langsung dari Autodesk Fusion 360 dengan inersia, collision, caster wheels, dan sensor mount yang akurat.
+- 🌍 **Simulasi Gazebo Lengkap:** Integrasi `diff_drive` controller, sensor LiDAR 360°, IMU, dan joint state publisher.
+- 🗺️ **Dual Mode SLAM & Nav2:** Launch file terpadu untuk mapping dan autonomous navigation baik di simulasi maupun robot fisik.
+- 🕹️ **Interactive Keyboard Teleop:** Kontrol pergerakan halus dengan penyesuaian kecepatan linier dan anguler secara *real-time*.
 
 ---
 
-## 💻 Tech Stack
+## 💻 Tech Stack & Hardware
 
-| Komponen | Keterangan |
-|:--|:--|
-| **Framework** | ROS2 Humble |
-| **Languages** | Python, C++, XACRO |
-| **Libraries** | ROS2 Nodes, RViz, Gazebo |
-| **OS Support** | Ubuntu 22.04 LTS |
+| Komponen | Spesifikasi / Deskripsi |
+|:---|:---|
+| **ROS Distribution** | ROS 2 Humble Hawksbill (Ubuntu 22.04 LTS) |
+| **SBC (Robot Fisik)** | NVIDIA Jetson Orin Nano / Jetson Series |
+| **LiDAR Scanner** | RPLIDAR A2M8 (360° Laser Scan) |
+| **Depth Camera** | Orbbec Astra Pro Plus / Intel RealSense |
+| **IMU Sensor** | Bosch BNO055 (9-DOF IMU) |
+| **Motor Controller** | Custom Serial MCU (`/dev/ttyACM0`) dengan Encoder Odometry |
 
 ---
 
-## ⚙️ Hardware Setup
+## 📦 Struktur Package
 
-| Part | Deskripsi |
-|:--|:--|
-| 🧠 **Nvidia Jetson Orin Nano** | Single Board Computer |
-| 🎥 **Intel Realsense Astra Pro Plus** | Depth Camera |
-| 🛰️ **RPLIDAR A2M8** | 360° Lidar Scanner |
-| 🧭 **BNO055** | Inertial Measuring Unit |
+```
+agv_ws/src/
+├── agv_description/     # Model URDF/Xacro, mesh 3D STL, konfigurasi RViz/Gazebo & launch simulasi
+├── agv_controller/      # Odom translator (motor-encoder), keyboard teleop, joystick, nav2 launch
+├── agv_filmware/        # Driver sensor hardware (BNO055 IMU)
+├── agv_scene/           # Mission manager & data logger untuk pengujian eksperimen
+├── my_nav2_planners/    # Custom Nav2 Global/Local Planner plugins (C++)
+├── agv_cpp_examples/    # Contoh node ROS 2 C++
+└── agv_py_examples/     # Contoh node ROS 2 Python
+```
+
 ---
 
-## 📜 Installation & Usage Guide
+## ⚙️ 1. Instalasi & Build
 
-### 🧩 1. Install Dependencies
+### A. Dependensi ROS 2
 ```bash
-sudo apt install -y \
-    ros-humble-ros2-control \
-    ros-humble-ros2-controllers \
-    ros-humble-controller-manager \
-    ros-humble-velocity-controllers \
-    ros-humble-joint-state-broadcaster \
-    ros-humble-ros2controlcli \
+sudo apt update && sudo apt install -y \
+    ros-humble-gazebo-ros-pkgs \
+    ros-humble-gazebo-plugins \
     ros-humble-xacro \
     ros-humble-joint-state-publisher-gui \
-    ros-humble-rplidar-ros \
+    ros-humble-robot-state-publisher \
+    ros-humble-rviz2 \
     ros-humble-slam-toolbox \
-    ros-humble-navigation2 ros-humble-nav2-bringup ros-humble-robot-localization \
-    ros-humble-ros-gz*
+    ros-humble-navigation2 \
+    ros-humble-nav2-bringup \
+    ros-humble-twist-mux \
+    ros-humble-rplidar-ros
 ```
 
----
-
-### 📦 2. Clone Repository
-```bash
-cd ~
-git clone https://github.com/dionisioraditya/agv_ws.git
-cd agv_ws
-```
-
----
-
-### ⚙️ 3. Build Project
-> 💡 Always build before running the simulation
+### B. Build Workspace
 ```bash
 cd ~/agv_ws
-colcon build
-```
-
----
-
-### 🦾 4. Display Robot Model on RViz
-```bash
-# Open new terminal
-cd ~/agv_ws
+source /opt/ros/humble/setup.bash
+colcon build --symlink-install --cmake-args -DPython3_EXECUTABLE=/usr/bin/python3
 source install/setup.bash
+```
+
+---
+
+## 🎮 2. Panduan Menjalankan Simulasi (Gazebo)
+
+### A. Tampilkan Model Robot di RViz2 (Visual Check)
+Untuk memeriksa joint dan visualisasi mesh 3D dengan GUI slider joint:
+```bash
+source ~/agv_ws/install/setup.bash
 ros2 launch agv_description display.launch.py
 ```
 
 ---
 
-### 🕹️ 5. Run Full Simulation (Gazebo + Joystick)
+### B. Menjalankan Gazebo + Keyboard Teleop
+1. **Terminal 1 – Buka Gazebo World & Spawn Robot:**
+   ```bash
+   source ~/agv_ws/install/setup.bash
+   ros2 launch agv_description gazebo.launch.py
+   ```
+2. **Terminal 2 – Keyboard Teleoperation:**
+   ```bash
+   source ~/agv_ws/install/setup.bash
+   ros2 launch agv_controller teleop.launch.py
+   ```
+   *Kontrol Keyboard:*
+   * `W` / `↑` : Maju
+   * `S` / `↓` : Mundur
+   * `A` / `←` : Belok Kiri
+   * `D` / `→` : Belok Kanan
+   * `SPACE` / `X` : Berhenti
+   * `Q` / `Z` : Tambah / Kurang Kecepatan Linier
+   * `E` / `C` : Tambah / Kurang Kecepatan Anguler
 
-#### 🪄 Terminal 1 – Build Workspace
+---
+
+### C. Simulasi SLAM Mapping (All-in-One)
+Membuka Gazebo, SLAM Toolbox Online Async, dan RViz2 dalam satu perintah:
+1. **Terminal 1 – Launch Mapping Simulasi:**
+   ```bash
+   source ~/agv_ws/install/setup.bash
+   ros2 launch agv_description sim_mapping.launch.py
+   ```
+2. **Terminal 2 – Kemudikan Robot dengan Teleop:**
+   ```bash
+   source ~/agv_ws/install/setup.bash
+   ros2 launch agv_controller teleop.launch.py
+   ```
+3. **Menyimpan Map yang Sudah Dibuat:**
+   ```bash
+   ros2 run nav2_map_server map_saver_cli -f ~/agv_ws/map_sim_save
+   ```
+
+---
+
+### D. Simulasi Nav2 Autonomous Navigation (All-in-One)
+1. **Terminal 1 – Launch Nav2 Simulasi:**
+   ```bash
+   source ~/agv_ws/install/setup.bash
+   ros2 launch agv_description sim_navigation.launch.py
+   ```
+2. Di RViz2:
+   * Berikan **2D Pose Estimate** awal robot jika menggunakan AMCL, atau langsung gunakan **Nav2 Goal** untuk navigasi waypoint.
+
+---
+
+## 🤖 3. Panduan Menjalankan Robot Fisik (Real-World)
+
+### A. Bringup Robot Fisik (Hardware & Sensor)
+Menjalankan `odom_translator.py`, driver `bno055_driver`, RPLidar (`lidar_head-v2`), Astra Camera, dan `twist_mux`:
 ```bash
-cd ~/agv_ws
-colcon build
+source ~/agv_ws/install/setup.bash
+ros2 launch agv_description agv_bringup.launch.py
 ```
 
-#### 🌍 Terminal 2 – Launch Gazebo Simulation
-```bash
-cd ~/agv_ws
-source install/setup.bash
-ros2 launch agv_description gazebo.launch.py
+---
+
+### B. SLAM Mapping di Dunia Nyata
+1. **Terminal 1 – Bringup Robot:**
+   ```bash
+   source ~/agv_ws/install/setup.bash
+   ros2 launch agv_description agv_bringup.launch.py
+   ```
+2. **Terminal 2 – SLAM Toolbox & RViz2:**
+   ```bash
+   source ~/agv_ws/install/setup.bash
+   ros2 launch agv_description mapping.launch.py
+   ```
+3. **Terminal 3 – Teleop Robot:**
+   ```bash
+   source ~/agv_ws/install/setup.bash
+   ros2 launch agv_controller teleop.launch.py
+   ```
+4. **Terminal 4 – Simpan Map Setelah Selesai:**
+   ```bash
+   ros2 run nav2_map_server map_saver_cli -f ~/agv_ws/map_koridor_save
+   ```
+
+---
+
+### C. Lokalisasi & Navigasi Otonom (Nav2) di Robot Fisik
+1. **Terminal 1 – Bringup Robot:**
+   ```bash
+   source ~/agv_ws/install/setup.bash
+   ros2 launch agv_description agv_bringup.launch.py
+   ```
+2. **Terminal 2 – Lokalisasi SLAM Toolbox (Menggunakan Map yang Disimpan):**
+   ```bash
+   source ~/agv_ws/install/setup.bash
+   ros2 launch agv_description localization.launch.py
+   ```
+3. **Terminal 3 – Nav2 Navigation Stack:**
+   ```bash
+   source ~/agv_ws/install/setup.bash
+   ros2 launch agv_controller agv_navigation.launch.py
+   ```
+
+---
+
+## 🌲 4. Arsitektur TF Tree & Konvensi Frame
+
+```
+map
+ └── odom (diterbitkan oleh SLAM Toolbox / Odom Translator / Gazebo Diff-Drive)
+      └── base_footprint (pusat rotasi di permukaan lantai)
+           └── base_link-v3 (chassis robot utama)
+                ├── lidar_housing-v2 ── lidar_head-v2 (Frame sensor Lidar 360° /scan)
+                ├── camera_base-v3 ── camera_lens_1-v2 (Frame kamera depth)
+                ├── imu_link-v1 (Frame sensor IMU BNO055 /imu/out)
+                ├── wheel_bracket_left-v4 ── wheel_left-v2
+                ├── wheel_bracket_right-v1 ── wheel_right-v1
+                ├── castrol_bracket_left-v2 ── ... ── castrol_wheel_left-v2
+                └── castrol_bracket_right-v1 ── ... ── castrol_wheel_right-v1
 ```
 
-#### 🎮 Terminal 3 – Launch Controller
+---
+
+## 🚀 5. Mission Manager (Pengujian Eksperimen)
+
+Untuk menjalankan skenario misi otomatis multi-waypoint:
+
 ```bash
-cd ~/agv_ws
-source install/setup.bash
+# Terminal 1: Jalankan node mission manager
+ros2 run agv_scene mission_manager_data --ros-args -p experiment_id:=S1_trial_01
 
-# Show available arguments
-ros2 launch agv_controller controller.launch.py --show-args
+# Terminal 2: Kirim perintah single/multi target
+# Target Tunggal:
+ros2 topic pub --once /mission_command std_msgs/msg/String "{data: 'point1'}"
 
-# Option 1: Simple Control
-ros2 launch agv_controller controller.launch.py
-
-# Option 2: Differential Drive Control
-ros2 launch agv_controller controller.launch.py use_simple_control:=false
-
-# Joystick Teleoperation
-ros2 launch agv_controller joystick_teleop.launch.py
-```
-
-## Robot ROS Node Topic
-### Depth Camera & Lidar
-Use rviz for lidar or depth camera visualization
-#### Depth Camera topic
-```bash
-# make sure you have cloned the Astra Camera repository (link on .gitmodules)
-# Open new terminal
-cd ~/agv_ws
-. install/setup.bash
-ros2 launch astra_camera astra_pro.launch.xml uvc_product_id:=0x050f
-```
-
-#### Lidar topic
-```bash
-# Open new terminal
-cd ~/agv_ws
-. install/setup.bash
-ros2 launch rplidar_ros rplidar_a2m8_launch.py serial_port:=/dev/rplidar
-
-```
-### Robot Odometry (Differential Kinematic & IMU)
-#### IMU Node
-```bash
-# Open new terminal
-cd ~agv_ws
-. install/setup.bash
-ros2 run agv_filmware bno055_driver
-```
-#### Odometry Node
-```bash
-# Open new terminal
-cd ~agv_ws
-. install/setup.bash
-ros2 run agv_controller odom_translator.py
-```
-#### Keyboard controller
-```bash
-# Open new terminal
-ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r cmd_vel:=cmd_vel_key
-
-# I = Forward
-# K = Stop
-# L = Turn right
-# J = Turn left
-# , = Reverse
-```
-
-## Display Rviz for SLAM & Nav2
-```bash
-# Open new terminal
-cd ~agv_ws
-. install/setup.bash
-rviz2 -d /home/ksr/agv_ws/src/agv_origin_description/config/slam_tool_box.rviz
-```
-
-## Bringup all important nodes
-this is important part to run SLAM!
-```bash
-# Open new terminal
-cd ~agv_ws
-. install/setup.bash
-ros2 launch agv_origin_description agv_bringup.launch.py
-```
-
-## SLAM & Nav2
-### SLAM TOOLBOX
-```bash
-# Open new terminal
-cd ~agv_ws
-. install/setup.bash
-ros2 launch slam_toolbox online_async_launch.py
-```
-### Save Map
-```bash
-# Open new terminal
-cd ~agv_ws
-. install/setup.bash
-ros2 run nav2_map_server map_saver_cli -f ~/agv_ws/src/agv_origin_description/maps/map_labslam_toolbox online_async_launch.py
-```
-### SLAM TOOLBOX Localization from generated map
-```bash
-# Open new terminal
-cd ~agv_ws
-. install/setup.bash
-ros2 launch slam_toolbox localization_launch.py slam_params_file:=/home/ksr/agv_ws/src/agv_origin_description/config/mapper_params_online_async.yaml use_sim_time:=false
-```
-
-### Autonomous Navigation with nav2
-```bash
-# Open new terminal
-cd ~agv_ws
-. install/setup.bash
-ros2 launch agv_controller agv_navigation.launch.py
-```
-
-## Guide SLAM Mapping
-1. Open 4 terminal window
-2. run rviz2
-3. run bringup launcher
-4. run SLAM TOOLBOX
-5. run keyboard controller
-6. Drive the robot into undifined area
-7. Save map using SLAM TOOLBOX Plugin
-
-## Guide Localization 
-1. Makesure Bringup node, keyboard controller and Rviz2 program already running
-2. Intrupt terminal where running the SLAM TOOLBOX using CTRL+C
-3. From that terminal you can launch SLAM TOOLBOX Localization from generated map
-
-## Guide Autonomous Navigation
-1. Makesure Bringup node, SLAM TOOLBOX Localization from generated map, and Rviz2 already running.
-2. Open new terminal and then run Autonomous Navigation with nav2
-
-# mission manager
-## Cara menjalankan pengujian
-Setiap trial sebaiknya punya experiment_id berbeda.
-
-Misalnya S1 = single objective, trial pertama:
-```bash
-ros2 run agv_scene mission_manager_data \
---ros-args -p experiment_id:=S1_trial_01
-```
-Kemudian kirim:
-```bash
-ros2 topic pub --once /mission_command \
-std_msgs/msg/String "{data: 'point1'}"
-```
-Untuk multi-objective:
-```bash
-ros2 run agv_scene mission_manager_data \
---ros-args -p experiment_id:=S2_trial_01
-```
-```bash
-ros2 topic pub --once /mission_command \
-std_msgs/msg/String \
-"{data: 'point1,point2,home'}"
+# Multi Target:
+ros2 topic pub --once /mission_command std_msgs/msg/String "{data: 'point1,point2,home'}"
 ```

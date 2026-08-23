@@ -6,9 +6,8 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node, SetRemap
 
 def generate_launch_description():
-    pkg_origin_description = get_package_share_directory('agv_origin_description')
-    #nav2_config = os.path.join(pkg_origin_description, 'config', 'nav2_params_myplanner.yaml')
-    nav2_config = os.path.join(pkg_origin_description, 'config', 'nav2_params.yaml')
+    pkg_description = get_package_share_directory('agv_description')
+    nav2_config = os.path.join(pkg_description, 'config', 'nav2_params.yaml')
 
     nav2_bringup_dir = get_package_share_directory('nav2_bringup')
     nav2_launch_file = os.path.join(nav2_bringup_dir, 'launch', 'navigation_launch.py')

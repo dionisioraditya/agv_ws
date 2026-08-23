@@ -55,7 +55,7 @@ class BNO055Driver(Node):
         self.euler_pub = self.create_publisher(Vector3, "/imu/euler", 10)
 
         self.imu_msg = Imu()
-        self.imu_msg.header.frame_id = "imu_link"
+        self.imu_msg.header.frame_id = "imu_link-v1"
 
         # 100 Hz
         self.timer = self.create_timer(0.01, self.timer_callback)

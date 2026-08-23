@@ -6,23 +6,40 @@ from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
+    # Direktori package
+    pkg_agv_description = get_package_share_directory('agv_description')
+    pkg_slam_toolbox = get_package_share_directory('slam_toolbox')
+    pkg_agv_controller = get_package_share_directory('agv_controller')
+
     # 1. Bringup robot
-    pkg_agv_description = get_package_share_directory('agv_origin_description')
     bringup_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_agv_description, 'launch', 'agv_bringup.launch.py')
         )
     )
 
-    # 2. SLAM Toolbox
-    pkg_slam_toolbox = get_package_share_directory('slam_toolbox')
-    slam_launch = IncludeLaunchDescription(
+    # 2. SLAM Toolbox Localization
+    slam_params_file = os.path.join(
+        pkg_agv_description, 'config', 'mapper_params_online_async.yaml'
+    )
+    localization_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_slam_toolbox, 'launch', 'online_async_launch.py')
+            os.path.join(pkg_slam_toolbox, 'launch', 'localization_launch.py')
+        ),
+        launch_arguments={
+            'slam_params_file': slam_params_file,
+            'use_sim_time': 'false'
+        }.items()
+    )
+
+    # 3. Navigation Controller
+    nav_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_agv_controller, 'launch', 'agv_navigation.launch.py')
         )
     )
 
-    # 3. RViz2 dengan file konfigurasi SLAM
+    # 4. RViz2
     rviz_config_file = os.path.join(
         pkg_agv_description, 'config', 'slam_tool_box.rviz'
     )
@@ -36,6 +53,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         bringup_launch,
-        slam_launch,
+        localization_launch,
+        nav_launch,
         rviz_node
     ])
