@@ -552,7 +552,13 @@
         <child link="imu_link-v1" />
     </joint>
 
-    <!-- ==================== ALIAS FRAMES ==================== -->
+    <link name="base_link" />
+    <joint name="base_link_alias_joint" type="fixed">
+        <parent link="base_link-v3" />
+        <child link="base_link" />
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+    </joint>
+
     <link name="camera_lens_1" />
     <joint name="camera_lens_1_alias_joint" type="fixed">
         <parent link="camera_lens_1-v2" />
