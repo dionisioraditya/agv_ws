@@ -1,0 +1,7 @@
+<library path="agv_lyapunov_controller">
+  <class name="agv_lyapunov_controller/LyapunovController"
+         type="agv_lyapunov_controller::LyapunovController"
+         base_class_type="nav2_core::Controller">
+    <description>Lyapunov-based Path Tracking Controller for Nav2</description>
+  </class>
+</library>

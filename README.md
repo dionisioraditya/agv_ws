@@ -105,11 +105,19 @@ ros2 launch agv_description display.launch.py
 ---
 
 ### C. Simulasi SLAM Mapping (All-in-One)
-Membuka Gazebo, SLAM Toolbox Online Async, dan RViz2 dalam satu perintah:
+Membuka Gazebo dengan arena Rumah Sakit (atau arena lain), SLAM Toolbox Online Async, dan RViz2 dalam satu perintah:
 1. **Terminal 1 – Launch Mapping Simulasi:**
    ```bash
    source ~/agv_ws/install/setup.bash
+   
+   # Opsi 1: Arena Rumah Sakit (Default AWS Hospital World)
    ros2 launch agv_description sim_mapping.launch.py
+
+   # Opsi 2: Arena Kosong (Empty World)
+   ros2 launch agv_description sim_mapping.launch.py world:=empty
+
+   # Opsi 3: Rumah Sakit 2 Lantai
+   ros2 launch agv_description sim_mapping.launch.py world:=hospital_two_floors
    ```
 2. **Terminal 2 – Kemudikan Robot dengan Teleop:**
    ```bash
@@ -118,19 +126,24 @@ Membuka Gazebo, SLAM Toolbox Online Async, dan RViz2 dalam satu perintah:
    ```
 3. **Menyimpan Map yang Sudah Dibuat:**
    ```bash
-   ros2 run nav2_map_server map_saver_cli -f ~/agv_ws/map_sim_save
+   ros2 run nav2_map_server map_saver_cli -f ~/agv_ws/map_hospital_save
    ```
 
 ---
 
 ### D. Simulasi Nav2 Autonomous Navigation (All-in-One)
-1. **Terminal 1 – Launch Nav2 Simulasi:**
+Membuka Gazebo Hospital, memuat peta hasil mapping (`.yaml`/`.pgm`) via `map_server` + AMCL, menjalankan Nav2 Stack, dan RViz2 dalam satu perintah:
+1. **Launch Nav2 Simulasi dengan Hasil Map:**
    ```bash
    source ~/agv_ws/install/setup.bash
-   ros2 launch agv_description sim_navigation.launch.py
+   
+   # Memuat map hospital yang baru disimpan (default langsung membaca map_sim_hospital_save.yaml):
+   ros2 launch agv_description sim_navigation.launch.py map:=/home/diordty/agv_ws/map_sim_hospital_save.yaml
    ```
-2. Di RViz2:
-   * Berikan **2D Pose Estimate** awal robot jika menggunakan AMCL, atau langsung gunakan **Nav2 Goal** untuk navigasi waypoint.
+2. **Cara Menggerakkan Robot di RViz2:**
+   * Peta rumah sakit dan posisi robot akan langsung muncul di RViz2.
+   * Klik tombol **Nav2 Goal** di toolbar atas RViz2, lalu klik dan drag panah hijau di titik target ruangan mana pun yang ingin dituju.
+   * Robot akan merencanakan rute (global path), menghindari rintangan (local costmap), dan bernavigasi secara otonom menuju target!
 
 ---
 
