@@ -58,8 +58,8 @@ class OdomTranslator(Node):
         vr_rad = (2 * v + w * self.wheel_base) / (2 * self.wheel_radius)
         vl_rad = (2 * v - w * self.wheel_base) / (2 * self.wheel_radius)
 
-        vr_rad = max(-20.0, min(20.0, vr_rad))
-        vl_rad = max(-20.0, min(20.0, vl_rad))
+        vr_rad = max(-10.0, min(10.0, vr_rad))
+        vl_rad = max(-10.0, min(10.0, vl_rad))
 
         dir_r = "F" if vr_rad >= 0 else "B"
         dir_l = "F" if vl_rad >= 0 else "B"
