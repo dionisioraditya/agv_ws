@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_lifecycle/lifecycle_publisher.hpp"
 #include "nav2_core/controller.hpp"
 #include "nav2_costmap_2d/costmap_2d_ros.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
@@ -47,8 +48,9 @@ private:
   std::shared_ptr<nav2_costmap_2d::Costmap2DROS> costmap_ros_;
   std::string plugin_name_;
 
-  // Global Path
+  // Global Path & Visualizer Publisher
   nav_msgs::msg::Path global_plan_;
+  rclcpp_lifecycle::LifecyclePublisher<nav_msgs::msg::Path>::SharedPtr local_plan_pub_;
 
   // Parameter Kontrol Lyapunov
   double k_x_{1.5};

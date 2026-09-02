@@ -8,12 +8,14 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_lifecycle REQUIRED)
 find_package(nav2_core REQUIRED)
 find_package(nav2_costmap_2d REQUIRED)
 find_package(nav2_util REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(angles REQUIRED)
 
@@ -44,12 +46,14 @@ target_include_directories(agv_lyapunov_controller PUBLIC
 
 ament_target_dependencies(agv_lyapunov_controller
   rclcpp
+  rclcpp_lifecycle
   nav2_core
   nav2_costmap_2d
   nav2_util
   geometry_msgs
   nav_msgs
   tf2_ros
+  tf2_geometry_msgs
   pluginlib
   angles
 )

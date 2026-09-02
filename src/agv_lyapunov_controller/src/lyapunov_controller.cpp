@@ -3,6 +3,7 @@
 #include "nav2_util/node_utils.hpp"
 #include "pluginlib/class_list_macros.hpp"
 #include "tf2/utils.h"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 #include "angles/angles.h"
 #include <cmath>
 #include <algorithm>
@@ -26,6 +27,9 @@ void LyapunovController::configure(
     throw std::runtime_error("Node pointer is null during configure");
   }
 
+  // Publisher untuk visualisasi local plan di RViz (/local_plan)
+  local_plan_pub_ = node->create_publisher<nav_msgs::msg::Path>("local_plan", 1);
+
   // Deklarasi & Load Parameters dari YAML
   nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".k_x", rclcpp::ParameterValue(1.5));
   nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".k_y", rclcpp::ParameterValue(2.0));
@@ -44,9 +48,24 @@ void LyapunovController::configure(
   node->get_parameter(plugin_name_ + ".desired_linear_vel", desired_linear_vel_);
 }
 
-void LyapunovController::activate() {}
-void LyapunovController::deactivate() {}
-void LyapunovController::cleanup() {}
+void LyapunovController::activate()
+{
+  if (local_plan_pub_) {
+    local_plan_pub_->on_activate();
+  }
+}
+
+void LyapunovController::deactivate()
+{
+  if (local_plan_pub_) {
+    local_plan_pub_->on_deactivate();
+  }
+}
+
+void LyapunovController::cleanup()
+{
+  local_plan_pub_.reset();
+}
 
 void LyapunovController::setPlan(const nav_msgs::msg::Path & path)
 {
@@ -75,10 +94,32 @@ geometry_msgs::msg::TwistStamped LyapunovController::computeVelocityCommands(
     return cmd_vel;
   }
 
+  // Publish local plan untuk RViz
+  if (local_plan_pub_ && local_plan_pub_->is_activated()) {
+    auto plan_to_publish = global_plan_;
+    plan_to_publish.header.stamp = pose.header.stamp;
+    local_plan_pub_->publish(plan_to_publish);
+  }
+
+  // Pastikan pose robot dan koordinat path berada di frame yang sama
+  geometry_msgs::msg::PoseStamped current_pose = pose;
+  if (!global_plan_.header.frame_id.empty() && pose.header.frame_id != global_plan_.header.frame_id) {
+    try {
+      current_pose = tf_buffer_->transform(pose, global_plan_.header.frame_id, tf2::durationFromSec(0.1));
+    } catch (const tf2::TransformException & ex) {
+      if (auto node = node_.lock()) {
+        RCLCPP_WARN_THROTTLE(
+          node->get_logger(), *node->get_clock(), 1000,
+          "Transform pose failed: %s", ex.what());
+      }
+      return cmd_vel;
+    }
+  }
+
   // 1. Current Robot Pose (x, y, theta)
-  double rx = pose.pose.position.x;
-  double ry = pose.pose.position.y;
-  double r_theta = getYaw(pose.pose.orientation);
+  double rx = current_pose.pose.position.x;
+  double ry = current_pose.pose.position.y;
+  double r_theta = getYaw(current_pose.pose.orientation);
 
   // 2. Cari titik terdekat pada path terhadap posisi robot
   size_t closest_idx = 0;
