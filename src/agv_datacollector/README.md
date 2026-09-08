@@ -6,7 +6,7 @@ Package ini merekam stream kamera Orbbec Astra Pro Plus (1920x1080 @ 30 FPS) lan
 
 Hasil perekaman otomatis disimpan di direktori:
 ```text
-/home/diordty/agv_ws/video/rgb/
+agv_ws/video/rgb/
 ```
 
 ## Fitur Utama
@@ -23,7 +23,7 @@ Hasil perekaman otomatis disimpan di direktori:
 
 ### 1. Build Package (jika belum di-build)
 ```bash
-cd /home/diordty/agv_ws
+cd /home/agv_ws
 colcon build --packages-select agv_datacollector
 source install/setup.bash
 ```
