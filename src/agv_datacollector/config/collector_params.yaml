@@ -1,0 +1,24 @@
+/**:
+  rgb_recorder_node:
+    ros__parameters:
+      # Topics
+      image_topic: "/camera/color/image_raw"
+      cmd_vel_topic: "/cmd_vel"
+      odom_topic: "/odom"
+
+      # Frames for global localization lookup
+      map_frame: "map"
+      base_frame: "base_footprint"
+
+      # Video & Recording Settings
+      output_dir: "/home/diordty/agv_ws/video/rgb"
+      session_prefix: "vlm_record"
+      target_width: 1920
+      target_height: 1080
+      target_fps: 30.0
+      video_codec: "mp4v"
+      queue_size: 120  # In-memory buffer size to prevent frame drop
+
+      # Behavior
+      auto_detect_resolution: true
+      save_metadata: true
