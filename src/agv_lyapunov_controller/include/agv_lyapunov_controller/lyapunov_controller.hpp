@@ -65,6 +65,6 @@ private:
   double getYaw(const geometry_msgs::msg::Quaternion & q);
 };
 
-}  // namespace agv_lyapunov_controller
+}  
 
-#endif  // AGV_LYAPUNOV_CONTROLLER__LYAPUNOV_CONTROLLER_HPP_
+#endif  

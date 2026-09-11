@@ -11,7 +11,7 @@
       base_frame: "base_footprint"
 
       # Video & Recording Settings
-      output_dir: "/home/diordty/agv_ws/video/rgb"
+      output_dir: "~/agv_ws/video/rgb"
       session_prefix: "vlm_record"
       target_width: 1920
       target_height: 1080

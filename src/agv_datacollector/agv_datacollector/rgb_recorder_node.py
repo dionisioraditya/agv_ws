@@ -45,7 +45,7 @@ class RgbRecorderNode(Node):
         self.declare_parameter('odom_topic', '/odom')
         self.declare_parameter('map_frame', 'map')
         self.declare_parameter('base_frame', 'base_footprint')
-        self.declare_parameter('output_dir', '/home/diordty/agv_ws/video/rgb')
+        self.declare_parameter('output_dir', '~/agv_ws/video/rgb')
         self.declare_parameter('session_name', '')
         self.declare_parameter('target_width', 1920)
         self.declare_parameter('target_height', 1080)
@@ -60,7 +60,14 @@ class RgbRecorderNode(Node):
         self.odom_topic = self.get_parameter('odom_topic').value
         self.map_frame = self.get_parameter('map_frame').value
         self.base_frame = self.get_parameter('base_frame').value
-        self.output_dir = os.path.expanduser(self.get_parameter('output_dir').value)
+
+        raw_output_dir = self.get_parameter('output_dir').value
+        if raw_output_dir and '/home/diordty' in raw_output_dir and not os.path.exists('/home/diordty'):
+            raw_output_dir = raw_output_dir.replace('/home/diordty', os.path.expanduser('~'))
+        if not raw_output_dir:
+            raw_output_dir = '~/agv_ws/video/rgb'
+        self.output_dir = os.path.abspath(os.path.expanduser(raw_output_dir))
+
         self.session_name = self.get_parameter('session_name').value
         self.target_width = int(self.get_parameter('target_width').value)
         self.target_height = int(self.get_parameter('target_height').value)

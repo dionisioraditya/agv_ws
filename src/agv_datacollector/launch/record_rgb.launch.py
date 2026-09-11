@@ -49,7 +49,7 @@ def generate_launch_description():
 
     output_dir_arg = DeclareLaunchArgument(
         'output_dir',
-        default_value='/home/diordty/agv_ws/video/rgb',
+        default_value=os.path.expanduser('~/agv_ws/video/rgb'),
         description='Directory where MP4 and JSON metadata will be stored'
     )
 
