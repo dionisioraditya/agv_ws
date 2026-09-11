@@ -95,15 +95,6 @@ class RgbRecorderNode(Node):
         self.get_logger().info(f'Target Setting : {self.target_width}x{self.target_height} @ {self.target_fps} FPS')
         self.get_logger().info(f'Subscribing    : {self.image_topic}')
 
-    def log_info(self, msg: str):
-        if rclpy.ok():
-            try:
-                self.get_logger().info(msg)
-                return
-            except Exception:
-                pass
-        print(f'[rgb_recorder_node] [INFO]: {msg}')
-
         # ----------------- CV & Threading -----------------
         self.bridge = CvBridge()
         self.frame_queue = queue.Queue(maxsize=self.queue_size)
@@ -155,6 +146,15 @@ class RgbRecorderNode(Node):
         self.start_wall_time = time.time()
         self.writer_thread = threading.Thread(target=self._writer_worker, daemon=True)
         self.writer_thread.start()
+
+    def log_info(self, msg: str):
+        if rclpy.ok():
+            try:
+                self.get_logger().info(msg)
+                return
+            except Exception:
+                pass
+        print(f'[rgb_recorder_node] [INFO]: {msg}')
 
     def cmd_vel_callback(self, msg: Twist):
         with self.state_lock:
