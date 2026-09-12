@@ -6,3 +6,8 @@ build/
 install/
 log/
 video/
+
+# Agent context configuration
+AGENTS.md
+.agents/
+
