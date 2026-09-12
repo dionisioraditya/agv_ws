@@ -148,6 +148,49 @@ QPushButton#DangerButton:pressed {
     background-color: #b91c1c;
 }
 
+/* D-Pad Buttons for Manual Jog */
+QPushButton#DPadButton {
+    background-color: #262942;
+    color: #38bdf8;
+    border: 2px solid #3b4266;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    min-width: 50px;
+    min-height: 44px;
+}
+
+QPushButton#DPadButton:hover {
+    background-color: #383e63;
+    border-color: #38bdf8;
+    color: #ffffff;
+}
+
+QPushButton#DPadButton:pressed {
+    background-color: #0284c7;
+    border-color: #38bdf8;
+    color: #ffffff;
+}
+
+QPushButton#StopJogButton {
+    background-color: #991b1b;
+    color: #ffffff;
+    border: 2px solid #ef4444;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: bold;
+    min-width: 50px;
+    min-height: 44px;
+}
+
+QPushButton#StopJogButton:hover {
+    background-color: #dc2626;
+}
+
+QPushButton#StopJogButton:pressed {
+    background-color: #7f1d1d;
+}
+
 /* Primary Action Button */
 QPushButton#PrimaryButton {
     background-color: #4f46e5;
