@@ -5,3 +5,8 @@
 build/
 install/
 log/
+
+# Agent context configuration
+AGENTS.md
+.agents/
+
