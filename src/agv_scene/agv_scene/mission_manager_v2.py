@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import json
+import yaml
+from pathlib import Path
 from collections import deque
 from dataclasses import dataclass, field
 from enum import Enum, auto
@@ -175,6 +177,14 @@ class MissionManager(Node):
             10
         )
 
+        # Reload waypoints from YAML
+        self.reload_wp_sub = self.create_subscription(
+            Bool,
+            '/reload_waypoints',
+            lambda msg: self.load_waypoints_from_yaml(),
+            10
+        )
+
         # ----------------------------------------------------
         # ROS2 Publisher
         # ----------------------------------------------------
@@ -204,10 +214,34 @@ class MissionManager(Node):
             "Mission Management System started"
         )
 
+        # Load initial waypoints from YAML if available
+        self.load_waypoints_from_yaml()
+
         self.transition_to(
             MissionState.IDLE,
             note="Mission Manager initialized"
         )
+
+    def load_waypoints_from_yaml(self):
+        """Load or update waypoints from shared YAML storage."""
+        candidate_paths = [
+            Path.home() / '.ros' / 'agv_waypoints.yaml',
+            Path('/home/diordty/agv_ws/src/agv_hmi/config/waypoints.yaml'),
+        ]
+        for path in candidate_paths:
+            if path.exists():
+                try:
+                    with open(path, 'r') as f:
+                        data = yaml.safe_load(f)
+                    if data and isinstance(data, dict) and 'waypoints' in data:
+                        for wp_name, wp_coords in data['waypoints'].items():
+                            self.waypoints[wp_name.lower()] = wp_coords
+                        self.get_logger().info(
+                            f"Loaded {len(data['waypoints'])} waypoints from {path}"
+                        )
+                        return
+                except Exception as e:
+                    self.get_logger().warn(f"Failed to load waypoints from {path}: {e}")
 
     # ========================================================
     # RECEIVE MISSION
@@ -227,6 +261,8 @@ class MissionManager(Node):
 
         Satu message dianggap sebagai satu mission.
         """
+        # Ensure latest waypoints from YAML before processing
+        self.load_waypoints_from_yaml()
 
         raw_command = msg.data.strip()
 
