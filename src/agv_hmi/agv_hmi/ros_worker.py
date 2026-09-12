@@ -10,6 +10,7 @@ from rclpy.node import Node
 from rclpy.time import Time
 from rclpy.duration import Duration
 from std_msgs.msg import String, Bool
+from geometry_msgs.msg import Twist
 from tf2_ros import Buffer, TransformListener, TransformException
 
 from agv_hmi.storage import quaternion_to_yaw
@@ -35,6 +36,8 @@ class RosHmiNode(Node):
         self.mission_cmd_pub = self.create_publisher(String, '/mission_command', 10)
         self.mission_cancel_pub = self.create_publisher(Bool, '/mission_cancel', 10)
         self.reload_wp_pub = self.create_publisher(Bool, '/reload_waypoints', 10)
+        self.cmd_vel_key_pub = self.create_publisher(Twist, '/cmd_vel_key', 10)
+        self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel', 10)
 
         # Subscribers
         self.mission_status_sub = self.create_subscription(
@@ -147,6 +150,14 @@ class RosHmiNode(Node):
         msg.data = True
         self.reload_wp_pub.publish(msg)
 
+    def publish_teleop_cmd(self, linear_x: float, angular_z: float):
+        """Publish velocity command for manual robot teleop."""
+        msg = Twist()
+        msg.linear.x = float(linear_x)
+        msg.angular.z = float(angular_z)
+        self.cmd_vel_key_pub.publish(msg)
+        self.cmd_vel_pub.publish(msg)
+
 
 class RosWorker(QThread):
     """QThread worker to spin ROS 2 node without blocking the Qt main GUI loop."""
@@ -200,3 +211,13 @@ class RosWorker(QThread):
         """Trigger waypoints reload in ROS ecosystem."""
         if self.node:
             self.node.notify_waypoints_reloaded()
+
+    def send_teleop(self, linear_x: float, angular_z: float):
+        """Send teleop velocity command."""
+        if self.node:
+            self.node.publish_teleop_cmd(linear_x, angular_z)
+
+    def stop_robot(self):
+        """Send zero velocity to stop robot."""
+        if self.node:
+            self.node.publish_teleop_cmd(0.0, 0.0)

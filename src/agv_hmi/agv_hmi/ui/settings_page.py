@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 import math
-from typing import Optional
+from typing import Optional, Set
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
     QTableWidget, QTableWidgetItem, QHeaderView, QFrame,
     QInputDialog, QMessageBox, QDialog, QLineEdit, QDialogButtonBox,
-    QFormLayout
+    QFormLayout, QDoubleSpinBox, QGridLayout, QCheckBox
 )
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSignal, QTimer
 
 from agv_hmi.storage import WaypointStorage, yaw_to_quaternion
 
@@ -61,7 +61,7 @@ class EditPointDialog(QDialog):
 
 
 class SettingsPage(QWidget):
-    """Settings Page for Waypoint Management and Robot Pose Calibration (Teach-in)."""
+    """Settings Page for Waypoint Management, Calibration, and Manual Robot Teleop."""
 
     switch_to_dashboard = pyqtSignal()
     waypoints_modified = pyqtSignal()
@@ -72,6 +72,19 @@ class SettingsPage(QWidget):
         self.ros_worker = ros_worker
         self.latest_pose = None
 
+        # Teleop state
+        self.current_vx = 0.0
+        self.current_wz = 0.0
+        self.pressed_keys: Set[int] = set()
+
+        # Timer for continuous jog publishing (20 Hz)
+        self.jog_timer = QTimer(self)
+        self.jog_timer.setInterval(50)
+        self.jog_timer.timeout.connect(self._on_jog_timer_tick)
+
+        # Allow page to receive key events
+        self.setFocusPolicy(Qt.StrongFocus)
+
         self._init_ui()
         self._connect_signals()
         self.load_table_data()
@@ -79,7 +92,7 @@ class SettingsPage(QWidget):
     def _init_ui(self):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(20, 20, 20, 20)
-        layout.setSpacing(16)
+        layout.setSpacing(14)
 
         # ----------------- 1. HEADER CARD -----------------
         header_card = QFrame()
@@ -88,9 +101,11 @@ class SettingsPage(QWidget):
         header_layout.setContentsMargins(16, 12, 16, 12)
 
         left_header = QVBoxLayout()
-        title_label = QLabel("MANAJEMEN POINT & KALIBRASI")
+        title_label = QLabel("MANAJEMEN POINT & MANUAL JOGGING")
         title_label.setObjectName("TitleLabel")
-        desc_label = QLabel("Tambah titik baru via posisi robot (Teach-in), set koordinat baru, atau hapus titik.")
+        desc_label = QLabel(
+            "Gerakkan robot manual (W/A/S/D / D-Pad), rekam posisi saat ini (Teach-in), atau kelola daftar titik."
+        )
         desc_label.setObjectName("SubtitleLabel")
         left_header.addWidget(title_label)
         left_header.addWidget(desc_label)
@@ -99,34 +114,21 @@ class SettingsPage(QWidget):
         self.btn_back = QPushButton("⬅ Kembali ke Dashboard")
         self.btn_back.setObjectName("PrimaryButton")
         self.btn_back.setCursor(Qt.PointingHandCursor)
-        self.btn_back.clicked.connect(self.switch_to_dashboard.emit)
+        self.btn_back.clicked.connect(self._on_back_clicked)
         header_layout.addWidget(self.btn_back, stretch=1, alignment=Qt.AlignRight | Qt.AlignVCenter)
 
         layout.addWidget(header_card)
 
-        # ----------------- 2. LIVE ROBOT POSITION BANNER -----------------
-        pose_card = QFrame()
-        pose_card.setObjectName("Card")
-        pose_layout = QHBoxLayout(pose_card)
-        pose_layout.setContentsMargins(16, 10, 16, 10)
+        # ----------------- 2. MAIN SECTION (2 COLUMNS) -----------------
+        main_layout = QHBoxLayout()
+        main_layout.setSpacing(16)
 
-        pose_lbl_title = QLabel("📍 Posisi Global Robot Saat Ini (TF):")
-        pose_lbl_title.setObjectName("SectionLabel")
-        pose_layout.addWidget(pose_lbl_title)
-
-        self.pose_feedback_lbl = QLabel("Membaca koordinat robot...")
-        self.pose_feedback_lbl.setObjectName("ValueLabel")
-        pose_layout.addWidget(self.pose_feedback_lbl)
-        pose_layout.addStretch()
-
-        layout.addWidget(pose_card)
-
-        # ----------------- 3. WAYPOINT TABLE -----------------
+        # LEFT COLUMN: WAYPOINT TABLE & MANAGEMENT (stretch=3)
         table_card = QFrame()
         table_card.setObjectName("Card")
         table_layout = QVBoxLayout(table_card)
         table_layout.setContentsMargins(14, 14, 14, 14)
-        table_layout.setSpacing(12)
+        table_layout.setSpacing(10)
 
         table_header = QHBoxLayout()
         table_title = QLabel("DAFTAR POINT TERSIMPAN (YAML)")
@@ -154,38 +156,144 @@ class SettingsPage(QWidget):
         self.table.setSelectionMode(QTableWidget.SingleSelection)
         table_layout.addWidget(self.table)
 
-        # ----------------- 4. ACTION BUTTONS -----------------
-        actions_layout = QHBoxLayout()
-        actions_layout.setSpacing(12)
+        # Action Buttons under Table
+        actions_grid = QGridLayout()
+        actions_grid.setSpacing(8)
 
-        # Teach Point Button
-        self.btn_teach = QPushButton("📍 Tambah Point (Ambil Posisi Robot Sekarang)")
+        self.btn_teach = QPushButton("📍 Ambil Posisi Robot Sekarang (Teach Point)")
         self.btn_teach.setObjectName("StartButton")
         self.btn_teach.setCursor(Qt.PointingHandCursor)
         self.btn_teach.clicked.connect(self._on_teach_point_clicked)
-        actions_layout.addWidget(self.btn_teach)
+        actions_grid.addWidget(self.btn_teach, 0, 0, 1, 2)
 
-        # Overwrite with current pose
         self.btn_update_pose = QPushButton("🔄 Set Koordinat Baru ke Point Terpilih")
         self.btn_update_pose.setCursor(Qt.PointingHandCursor)
         self.btn_update_pose.clicked.connect(self._on_overwrite_with_current_pose)
-        actions_layout.addWidget(self.btn_update_pose)
+        actions_grid.addWidget(self.btn_update_pose, 1, 0)
 
-        # Manual Edit
         self.btn_edit = QPushButton("✏ Edit Nilai")
         self.btn_edit.setCursor(Qt.PointingHandCursor)
         self.btn_edit.clicked.connect(self._on_edit_manual_clicked)
-        actions_layout.addWidget(self.btn_edit)
+        actions_grid.addWidget(self.btn_edit, 1, 1)
 
-        # Delete Point
         self.btn_delete = QPushButton("🗑 Hapus Point")
         self.btn_delete.setObjectName("DangerButton")
         self.btn_delete.setCursor(Qt.PointingHandCursor)
         self.btn_delete.clicked.connect(self._on_delete_point_clicked)
-        actions_layout.addWidget(self.btn_delete)
+        actions_grid.addWidget(self.btn_delete, 2, 0, 1, 2)
 
-        table_layout.addLayout(actions_layout)
-        layout.addWidget(table_card, stretch=1)
+        table_layout.addLayout(actions_grid)
+        main_layout.addWidget(table_card, stretch=3)
+
+        # RIGHT COLUMN: MANUAL JOG / TELEOP PANEL (stretch=2)
+        teleop_card = QFrame()
+        teleop_card.setObjectName("Card")
+        teleop_layout = QVBoxLayout(teleop_card)
+        teleop_layout.setContentsMargins(14, 14, 14, 14)
+        teleop_layout.setSpacing(12)
+
+        teleop_title = QLabel("MANUAL JOGGING / TELEOP")
+        teleop_title.setObjectName("SectionLabel")
+        teleop_layout.addWidget(teleop_title)
+
+        # Pose monitor feedback inside teleop panel
+        pose_box = QFrame()
+        pose_box.setStyleSheet("background-color: #191a2a; border-radius: 8px; padding: 6px;")
+        pose_box_layout = QVBoxLayout(pose_box)
+        pose_box_layout.setContentsMargins(8, 6, 8, 6)
+        pose_box_layout.setSpacing(2)
+
+        p_lbl = QLabel("Posisi Robot Saat Ini (TF):")
+        p_lbl.setObjectName("SubtitleLabel")
+        self.pose_feedback_lbl = QLabel("Membaca koordinat robot...")
+        self.pose_feedback_lbl.setObjectName("ValueLabel")
+        self.pose_feedback_lbl.setStyleSheet("font-size: 13px; color: #38bdf8;")
+        pose_box_layout.addWidget(p_lbl)
+        pose_box_layout.addWidget(self.pose_feedback_lbl)
+        teleop_layout.addWidget(pose_box)
+
+        # Speed adjustment controls
+        speed_layout = QGridLayout()
+        speed_layout.setSpacing(6)
+
+        lbl_lin = QLabel("Linear (m/s):")
+        lbl_lin.setObjectName("SubtitleLabel")
+        self.spin_linear = QDoubleSpinBox()
+        self.spin_linear.setRange(0.05, 1.0)
+        self.spin_linear.setSingleStep(0.05)
+        self.spin_linear.setValue(0.35)
+        self.spin_linear.setStyleSheet("background-color: #181928; color: #fff; padding: 4px;")
+        speed_layout.addWidget(lbl_lin, 0, 0)
+        speed_layout.addWidget(self.spin_linear, 0, 1)
+
+        lbl_ang = QLabel("Angular (rad/s):")
+        lbl_ang.setObjectName("SubtitleLabel")
+        self.spin_angular = QDoubleSpinBox()
+        self.spin_angular.setRange(0.1, 2.5)
+        self.spin_angular.setSingleStep(0.1)
+        self.spin_angular.setValue(0.8)
+        self.spin_angular.setStyleSheet("background-color: #181928; color: #fff; padding: 4px;")
+        speed_layout.addWidget(lbl_ang, 1, 0)
+        speed_layout.addWidget(self.spin_angular, 1, 1)
+
+        teleop_layout.addLayout(speed_layout)
+
+        # D-Pad Button Layout
+        dpad_container = QWidget()
+        dpad_layout = QGridLayout(dpad_container)
+        dpad_layout.setSpacing(8)
+
+        self.btn_jog_fwd = QPushButton("▲\nMAJU [W]")
+        self.btn_jog_fwd.setObjectName("DPadButton")
+        self.btn_jog_fwd.setCursor(Qt.PointingHandCursor)
+        self.btn_jog_fwd.pressed.connect(self._on_fwd_pressed)
+        self.btn_jog_fwd.released.connect(self._on_jog_released)
+        dpad_layout.addWidget(self.btn_jog_fwd, 0, 1)
+
+        self.btn_jog_left = QPushButton("◄\nKIRI [A]")
+        self.btn_jog_left.setObjectName("DPadButton")
+        self.btn_jog_left.setCursor(Qt.PointingHandCursor)
+        self.btn_jog_left.pressed.connect(self._on_left_pressed)
+        self.btn_jog_left.released.connect(self._on_jog_released)
+        dpad_layout.addWidget(self.btn_jog_left, 1, 0)
+
+        self.btn_jog_stop = QPushButton("🛑\nSTOP [Spc]")
+        self.btn_jog_stop.setObjectName("StopJogButton")
+        self.btn_jog_stop.setCursor(Qt.PointingHandCursor)
+        self.btn_jog_stop.clicked.connect(self._emergency_stop_jog)
+        dpad_layout.addWidget(self.btn_jog_stop, 1, 1)
+
+        self.btn_jog_right = QPushButton("►\nKANAN [D]")
+        self.btn_jog_right.setObjectName("DPadButton")
+        self.btn_jog_right.setCursor(Qt.PointingHandCursor)
+        self.btn_jog_right.pressed.connect(self._on_right_pressed)
+        self.btn_jog_right.released.connect(self._on_jog_released)
+        dpad_layout.addWidget(self.btn_jog_right, 1, 2)
+
+        self.btn_jog_back = QPushButton("▼\nMUNDUR [S]")
+        self.btn_jog_back.setObjectName("DPadButton")
+        self.btn_jog_back.setCursor(Qt.PointingHandCursor)
+        self.btn_jog_back.pressed.connect(self._on_back_pressed)
+        self.btn_jog_back.released.connect(self._on_jog_released)
+        dpad_layout.addWidget(self.btn_jog_back, 2, 1)
+
+        teleop_layout.addWidget(dpad_container, alignment=Qt.AlignCenter)
+
+        # Keyboard control active notice
+        self.chk_keyboard = QCheckBox("Aktifkan Kontrol Keyboard (W/A/S/D)")
+        self.chk_keyboard.setChecked(True)
+        self.chk_keyboard.setStyleSheet("color: #a5b4fc; font-weight: bold;")
+        teleop_layout.addWidget(self.chk_keyboard)
+
+        tip_lbl = QLabel("Tahan tombol mouse atau tombol keyboard untuk menggerakkan robot.")
+        tip_lbl.setObjectName("SubtitleLabel")
+        tip_lbl.setWordWrap(True)
+        teleop_layout.addWidget(tip_lbl)
+
+        teleop_layout.addStretch()
+        main_layout.addWidget(teleop_card, stretch=2)
+
+        layout.addLayout(main_layout, stretch=1)
 
     def _connect_signals(self):
         if self.ros_worker:
@@ -199,7 +307,104 @@ class SettingsPage(QWidget):
             yaw = pose.get('yaw_deg', 0.0)
             self.pose_feedback_lbl.setText(f"X: {x:.3f} m  |  Y: {y:.3f} m  |  Yaw: {yaw:.1f}°")
         else:
-            self.pose_feedback_lbl.setText("Tidak dapat membaca TF robot saat ini")
+            self.pose_feedback_lbl.setText("TF robot tidak tersedia")
+
+    # ------------------- Manual Jogging Slots -------------------
+
+    def _on_fwd_pressed(self):
+        self._start_jog(self.spin_linear.value(), 0.0)
+
+    def _on_back_pressed(self):
+        self._start_jog(-self.spin_linear.value(), 0.0)
+
+    def _on_left_pressed(self):
+        self._start_jog(0.0, self.spin_angular.value())
+
+    def _on_right_pressed(self):
+        self._start_jog(0.0, -self.spin_angular.value())
+
+    def _on_jog_released(self):
+        if not self.pressed_keys:
+            self._emergency_stop_jog()
+
+    def _start_jog(self, vx: float, wz: float):
+        self.current_vx = vx
+        self.current_wz = wz
+        self._send_cmd(vx, wz)
+        if not self.jog_timer.isActive():
+            self.jog_timer.start()
+
+    def _on_jog_timer_tick(self):
+        self._send_cmd(self.current_vx, self.current_wz)
+
+    def _emergency_stop_jog(self):
+        self.jog_timer.stop()
+        self.current_vx = 0.0
+        self.current_wz = 0.0
+        self.pressed_keys.clear()
+        self._send_cmd(0.0, 0.0)
+
+    def _send_cmd(self, vx: float, wz: float):
+        if self.ros_worker:
+            self.ros_worker.send_teleop(vx, wz)
+
+    # ------------------- Keyboard Teleop Handling -------------------
+
+    def keyPressEvent(self, event):
+        if not self.chk_keyboard.isChecked() or event.isAutoRepeat():
+            super().keyPressEvent(event)
+            return
+
+        key = event.key()
+        if key in (Qt.Key_W, Qt.Key_S, Qt.Key_A, Qt.Key_D, Qt.Key_Space):
+            self.pressed_keys.add(key)
+            self._update_keyboard_velocity()
+            event.accept()
+        else:
+            super().keyPressEvent(event)
+
+    def keyReleaseEvent(self, event):
+        if not self.chk_keyboard.isChecked() or event.isAutoRepeat():
+            super().keyReleaseEvent(event)
+            return
+
+        key = event.key()
+        if key in self.pressed_keys:
+            self.pressed_keys.discard(key)
+            self._update_keyboard_velocity()
+            event.accept()
+        else:
+            super().keyReleaseEvent(event)
+
+    def _update_keyboard_velocity(self):
+        if Qt.Key_Space in self.pressed_keys:
+            self._emergency_stop_jog()
+            return
+
+        vx = 0.0
+        wz = 0.0
+        lin_speed = self.spin_linear.value()
+        ang_speed = self.spin_angular.value()
+
+        if Qt.Key_W in self.pressed_keys:
+            vx += lin_speed
+        if Qt.Key_S in self.pressed_keys:
+            vx -= lin_speed
+        if Qt.Key_A in self.pressed_keys:
+            wz += ang_speed
+        if Qt.Key_D in self.pressed_keys:
+            wz -= ang_speed
+
+        if vx == 0.0 and wz == 0.0:
+            self._emergency_stop_jog()
+        else:
+            self._start_jog(vx, wz)
+
+    def _on_back_clicked(self):
+        self._emergency_stop_jog()
+        self.switch_to_dashboard.emit()
+
+    # ------------------- Table & Waypoint Management -------------------
 
     def load_table_data(self):
         """Populate the table with stored waypoints from YAML."""
@@ -267,8 +472,8 @@ class SettingsPage(QWidget):
         default_name = f"point_{self.table.rowCount() + 1}"
         name, ok = QInputDialog.getText(
             self,
-            "Tambah Point Baru",
-            f"Koordinat Robot Saat Ini:\nX: {x:.3f} m, Y: {y:.3f} m, Yaw: {yaw:.1f}°\n\nMasukkan Nama Point:",
+            "Tambah Point Baru (Teach Point)",
+            f"Posisi Robot Saat Ini:\nX: {x:.3f} m, Y: {y:.3f} m, Yaw: {yaw:.1f}°\n\nMasukkan Nama Point:",
             text=default_name
         )
 
@@ -348,7 +553,6 @@ class SettingsPage(QWidget):
             try:
                 new_name, new_coords = dialog.get_values()
                 if new_name != wp_name:
-                    # Rename -> delete old and save new
                     self.storage.delete_waypoint(wp_name)
                 self.storage.save_waypoint(new_name, new_coords)
                 self.load_table_data()
