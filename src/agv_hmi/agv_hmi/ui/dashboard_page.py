@@ -21,6 +21,7 @@ class DashboardPage(QWidget):
         self.ros_worker = ros_worker
 
         self.current_state_name = "IDLE"
+        self.is_mission_active = False
         self._init_ui()
         self._connect_signals()
         self.refresh_waypoints_bank()
@@ -169,17 +170,11 @@ class DashboardPage(QWidget):
         bottom_layout.setContentsMargins(16, 12, 16, 12)
         bottom_layout.setSpacing(16)
 
-        self.btn_start = QPushButton("▶  START MISSION")
-        self.btn_start.setObjectName("StartButton")
-        self.btn_start.setCursor(Qt.PointingHandCursor)
-        self.btn_start.clicked.connect(self._on_start_clicked)
-        bottom_layout.addWidget(self.btn_start, stretch=3)
-
-        self.btn_cancel = QPushButton("⏹  BATALKAN / CANCEL")
-        self.btn_cancel.setObjectName("DangerButton")
-        self.btn_cancel.setCursor(Qt.PointingHandCursor)
-        self.btn_cancel.clicked.connect(self._on_cancel_clicked)
-        bottom_layout.addWidget(self.btn_cancel, stretch=1)
+        self.btn_mission_toggle = QPushButton("▶  START MISSION")
+        self.btn_mission_toggle.setObjectName("StartButton")
+        self.btn_mission_toggle.setCursor(Qt.PointingHandCursor)
+        self.btn_mission_toggle.clicked.connect(self._on_mission_toggle_clicked)
+        bottom_layout.addWidget(self.btn_mission_toggle, stretch=1)
 
         layout.addWidget(bottom_bar)
 
@@ -269,35 +264,53 @@ class DashboardPage(QWidget):
             for i in range(self.queue_list.count())
         ]
 
-    def _on_start_clicked(self):
-        queue = self.get_current_queue()
-        if not queue:
-            QMessageBox.warning(
-                self,
-                "Antrian Kosong",
-                "Silakan pilih minimal satu point untuk membuat antrian misi sebelum menekan Start."
-            )
-            return
+    def _on_mission_toggle_clicked(self):
+        """Toggle action between Start Mission and Cancel Mission."""
+        if not self.is_mission_active:
+            # Action: START
+            queue = self.get_current_queue()
+            if not queue:
+                QMessageBox.warning(
+                    self,
+                    "Antrian Kosong",
+                    "Silakan pilih minimal satu point untuk membuat antrian misi sebelum menekan Start."
+                )
+                return
 
-        cmd_str = ",".join(queue)
-        if self.ros_worker:
-            self.ros_worker.send_mission(queue)
-            QMessageBox.information(
+            cmd_str = ",".join(queue)
+            if self.ros_worker:
+                self.ros_worker.send_mission(queue)
+            # Do NOT switch button here; wait until state changes to active
+        else:
+            # Action: CANCEL
+            reply = QMessageBox.question(
                 self,
-                "Misi Dimulai",
-                f"Misi berhasil dikirim ke Mission Manager:\n{cmd_str}"
+                "Konfirmasi Pembatalan",
+                "Apakah Anda yakin ingin membatalkan misi yang sedang berjalan?",
+                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.No
             )
+            if reply == QMessageBox.Yes and self.ros_worker:
+                self.ros_worker.cancel_mission()
+            # Do NOT switch button here; wait until state changes to inactive
 
-    def _on_cancel_clicked(self):
-        reply = QMessageBox.question(
-            self,
-            "Konfirmasi Pembatalan",
-            "Apakah Anda yakin ingin membatalkan misi yang sedang berjalan?",
-            QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No
-        )
-        if reply == QMessageBox.Yes and self.ros_worker:
-            self.ros_worker.cancel_mission()
+    def _update_button_mode(self, is_active: bool):
+        """Update button appearance between START and CANCEL."""
+        self.is_mission_active = is_active
+        if is_active:
+            self.btn_mission_toggle.setText("⏹  BATALKAN MISI (CANCEL)")
+            self.btn_mission_toggle.setObjectName("DangerButton")
+            self.btn_mission_toggle.setStyleSheet(
+                "background-color: #dc2626; color: #ffffff; border: 1px solid #ef4444; "
+                "border-radius: 10px; font-size: 15px; font-weight: bold; padding: 12px 24px;"
+            )
+        else:
+            self.btn_mission_toggle.setText("▶  START MISSION")
+            self.btn_mission_toggle.setObjectName("StartButton")
+            self.btn_mission_toggle.setStyleSheet(
+                "background-color: #059669; color: #ffffff; border: 1px solid #10b981; "
+                "border-radius: 10px; font-size: 15px; font-weight: bold; padding: 12px 24px;"
+            )
 
     def _update_robot_pose(self, pose: dict):
         """Update live telemetry coordinates."""
@@ -312,7 +325,7 @@ class DashboardPage(QWidget):
 
     def _update_mission_status(self, data: dict):
         """Update FSM status pill and active mission indicators."""
-        state = data.get('state', 'IDLE')
+        state = str(data.get('state', 'IDLE')).upper()
         self.current_state_name = state
         self.status_pill.setText(state)
         self.status_pill.setStyleSheet(get_status_style(state))
@@ -325,3 +338,9 @@ class DashboardPage(QWidget):
         self.active_mission_label.setText(
             f"Active: {active_mission} | Target Saat Ini: {current_obj}{rem_str}"
         )
+
+        # Switch button mode ONLY if state actually changed
+        active_states = {"MISSION_RECEIVED", "NAVIGATING"}
+        is_active = state in active_states
+        if is_active != self.is_mission_active:
+            self._update_button_mode(is_active)

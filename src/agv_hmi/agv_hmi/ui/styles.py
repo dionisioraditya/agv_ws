@@ -26,6 +26,60 @@ QFrame#HeaderCard {
     padding: 14px;
 }
 
+/* Custom Top Window Bar */
+QFrame#WindowTitleBar {
+    background-color: #161726;
+    border-bottom: 1px solid #282b3f;
+    min-height: 34px;
+    max-height: 34px;
+}
+
+QPushButton#WindowControlBtn {
+    background-color: transparent;
+    color: #94a3b8;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: bold;
+    min-width: 32px;
+    max-width: 32px;
+    min-height: 24px;
+    max-height: 24px;
+    padding: 0px;
+}
+
+QPushButton#WindowControlBtn:hover {
+    background-color: #2b2e46;
+    color: #38bdf8;
+}
+
+QPushButton#WindowControlBtn:pressed {
+    background-color: #1e2133;
+}
+
+QPushButton#WindowCloseBtn {
+    background-color: transparent;
+    color: #94a3b8;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: bold;
+    min-width: 32px;
+    max-width: 32px;
+    min-height: 24px;
+    max-height: 24px;
+    padding: 0px;
+}
+
+QPushButton#WindowCloseBtn:hover {
+    background-color: #ef4444;
+    color: #ffffff;
+}
+
+QPushButton#WindowCloseBtn:pressed {
+    background-color: #b91c1c;
+}
+
 /* Group Boxes */
 QGroupBox {
     background-color: #1c1d2e;
@@ -153,11 +207,9 @@ QPushButton#DPadButton {
     background-color: #262942;
     color: #38bdf8;
     border: 2px solid #3b4266;
-    border-radius: 10px;
-    font-size: 16px;
+    border-radius: 12px;
     font-weight: bold;
-    min-width: 50px;
-    min-height: 44px;
+    padding: 2px;
 }
 
 QPushButton#DPadButton:hover {
@@ -176,11 +228,9 @@ QPushButton#StopJogButton {
     background-color: #991b1b;
     color: #ffffff;
     border: 2px solid #ef4444;
-    border-radius: 10px;
-    font-size: 13px;
+    border-radius: 12px;
     font-weight: bold;
-    min-width: 50px;
-    min-height: 44px;
+    padding: 2px;
 }
 
 QPushButton#StopJogButton:hover {

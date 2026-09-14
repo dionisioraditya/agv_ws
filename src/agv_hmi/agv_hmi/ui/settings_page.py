@@ -60,6 +60,67 @@ class EditPointDialog(QDialog):
         }
 
 
+class ResponsiveDpadWidget(QWidget):
+    """Responsive D-Pad container that dynamically scales buttons while maintaining exact 1:1 square symmetry."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.grid = QGridLayout(self)
+        self.grid.setContentsMargins(0, 0, 0, 0)
+        self.grid.setSpacing(8)
+        self.grid.setAlignment(Qt.AlignCenter)
+
+        self.btn_jog_fwd = QPushButton("▲\nMAJU\n[W]")
+        self.btn_jog_fwd.setObjectName("DPadButton")
+        self.btn_jog_fwd.setCursor(Qt.PointingHandCursor)
+
+        self.btn_jog_left = QPushButton("◄\nKIRI\n[A]")
+        self.btn_jog_left.setObjectName("DPadButton")
+        self.btn_jog_left.setCursor(Qt.PointingHandCursor)
+
+        self.btn_jog_stop = QPushButton("🛑\nSTOP\n[Spc]")
+        self.btn_jog_stop.setObjectName("StopJogButton")
+        self.btn_jog_stop.setCursor(Qt.PointingHandCursor)
+
+        self.btn_jog_right = QPushButton("►\nKANAN\n[D]")
+        self.btn_jog_right.setObjectName("DPadButton")
+        self.btn_jog_right.setCursor(Qt.PointingHandCursor)
+
+        self.btn_jog_back = QPushButton("▼\nMUNDUR\n[S]")
+        self.btn_jog_back.setObjectName("DPadButton")
+        self.btn_jog_back.setCursor(Qt.PointingHandCursor)
+
+        self.buttons = [
+            self.btn_jog_fwd,
+            self.btn_jog_left,
+            self.btn_jog_stop,
+            self.btn_jog_right,
+            self.btn_jog_back
+        ]
+
+        self.grid.addWidget(self.btn_jog_fwd, 0, 1)
+        self.grid.addWidget(self.btn_jog_left, 1, 0)
+        self.grid.addWidget(self.btn_jog_stop, 1, 1)
+        self.grid.addWidget(self.btn_jog_right, 1, 2)
+        self.grid.addWidget(self.btn_jog_back, 2, 1)
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        w = self.width()
+        h = self.height()
+        side = min(w, h)
+        spacing = self.grid.spacing()
+        # Scale between 55px and 120px depending on screen/panel space
+        btn_size = max(55, min(120, int((side - 2 * spacing) / 3)))
+        font_pt = max(9, min(13, int(btn_size * 0.13)))
+
+        for btn in self.buttons:
+            btn.setFixedSize(btn_size, btn_size)
+            f = btn.font()
+            f.setPointSize(font_pt)
+            btn.setFont(f)
+
+
 class SettingsPage(QWidget):
     """Settings Page for Waypoint Management, Calibration, and Manual Robot Teleop."""
 
@@ -101,7 +162,7 @@ class SettingsPage(QWidget):
         header_layout.setContentsMargins(16, 12, 16, 12)
 
         left_header = QVBoxLayout()
-        title_label = QLabel("MANAJEMEN POINT & MANUAL JOGGING")
+        title_label = QLabel("MANAJEMEN POINT")
         title_label.setObjectName("TitleLabel")
         desc_label = QLabel(
             "Gerakkan robot manual (W/A/S/D / D-Pad), rekam posisi saat ini (Teach-in), atau kelola daftar titik."
@@ -238,46 +299,25 @@ class SettingsPage(QWidget):
 
         teleop_layout.addLayout(speed_layout)
 
-        # D-Pad Button Layout
-        dpad_container = QWidget()
-        dpad_layout = QGridLayout(dpad_container)
-        dpad_layout.setSpacing(8)
+        # D-Pad Button Layout (Responsive square container)
+        self.dpad_container = ResponsiveDpadWidget()
+        self.btn_jog_fwd = self.dpad_container.btn_jog_fwd
+        self.btn_jog_left = self.dpad_container.btn_jog_left
+        self.btn_jog_stop = self.dpad_container.btn_jog_stop
+        self.btn_jog_right = self.dpad_container.btn_jog_right
+        self.btn_jog_back = self.dpad_container.btn_jog_back
 
-        self.btn_jog_fwd = QPushButton("▲\nMAJU [W]")
-        self.btn_jog_fwd.setObjectName("DPadButton")
-        self.btn_jog_fwd.setCursor(Qt.PointingHandCursor)
         self.btn_jog_fwd.pressed.connect(self._on_fwd_pressed)
         self.btn_jog_fwd.released.connect(self._on_jog_released)
-        dpad_layout.addWidget(self.btn_jog_fwd, 0, 1)
-
-        self.btn_jog_left = QPushButton("◄\nKIRI [A]")
-        self.btn_jog_left.setObjectName("DPadButton")
-        self.btn_jog_left.setCursor(Qt.PointingHandCursor)
         self.btn_jog_left.pressed.connect(self._on_left_pressed)
         self.btn_jog_left.released.connect(self._on_jog_released)
-        dpad_layout.addWidget(self.btn_jog_left, 1, 0)
-
-        self.btn_jog_stop = QPushButton("🛑\nSTOP [Spc]")
-        self.btn_jog_stop.setObjectName("StopJogButton")
-        self.btn_jog_stop.setCursor(Qt.PointingHandCursor)
         self.btn_jog_stop.clicked.connect(self._emergency_stop_jog)
-        dpad_layout.addWidget(self.btn_jog_stop, 1, 1)
-
-        self.btn_jog_right = QPushButton("►\nKANAN [D]")
-        self.btn_jog_right.setObjectName("DPadButton")
-        self.btn_jog_right.setCursor(Qt.PointingHandCursor)
         self.btn_jog_right.pressed.connect(self._on_right_pressed)
         self.btn_jog_right.released.connect(self._on_jog_released)
-        dpad_layout.addWidget(self.btn_jog_right, 1, 2)
-
-        self.btn_jog_back = QPushButton("▼\nMUNDUR [S]")
-        self.btn_jog_back.setObjectName("DPadButton")
-        self.btn_jog_back.setCursor(Qt.PointingHandCursor)
         self.btn_jog_back.pressed.connect(self._on_back_pressed)
         self.btn_jog_back.released.connect(self._on_jog_released)
-        dpad_layout.addWidget(self.btn_jog_back, 2, 1)
 
-        teleop_layout.addWidget(dpad_container, alignment=Qt.AlignCenter)
+        teleop_layout.addWidget(self.dpad_container, stretch=1)
 
         # Keyboard control active notice
         self.chk_keyboard = QCheckBox("Aktifkan Kontrol Keyboard (W/A/S/D)")
@@ -290,7 +330,6 @@ class SettingsPage(QWidget):
         tip_lbl.setWordWrap(True)
         teleop_layout.addWidget(tip_lbl)
 
-        teleop_layout.addStretch()
         main_layout.addWidget(teleop_card, stretch=2)
 
         layout.addLayout(main_layout, stretch=1)
