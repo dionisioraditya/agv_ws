@@ -11,3 +11,11 @@ video/
 AGENTS.md
 .agents/
 
+# Graphify artifacts & knowledge graph
+graph.json
+graph.html
+GRAPH_REPORT.md
+.graphify/
+graphify_out/
+graphify-out/
+.graphify_*.json
