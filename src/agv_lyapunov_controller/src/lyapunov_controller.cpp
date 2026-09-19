@@ -37,11 +37,10 @@ void LyapunovController::configure(
   nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".lookahead_dist", rclcpp::ParameterValue(0.3));
   nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".max_vel_x", rclcpp::ParameterValue(0.5));
   nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".max_vel_theta", rclcpp::ParameterValue(1.0));
-  nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".desired_linear_vel", rclcpp::ParameterValue(0.3));
-  nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".xy_goal_tolerance", rclcpp::ParameterValue(0.20));
-  nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".yaw_goal_tolerance", rclcpp::ParameterValue(0.15));
+  nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".xy_goal_tolerance", rclcpp::ParameterValue(0.25));
+  nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".yaw_goal_tolerance", rclcpp::ParameterValue(0.20));
   nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".k_rotate", rclcpp::ParameterValue(2.0));
-  nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".min_vel_theta", rclcpp::ParameterValue(0.2));
+  nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".min_vel_theta", rclcpp::ParameterValue(0.15));
 
   node->get_parameter(plugin_name_ + ".k_x", k_x_);
   node->get_parameter(plugin_name_ + ".k_y", k_y_);
@@ -78,6 +77,7 @@ void LyapunovController::cleanup()
 void LyapunovController::setPlan(const nav_msgs::msg::Path & path)
 {
   global_plan_ = path;
+  is_rotating_to_goal_ = false;  // Reset latching saat rute baru diterima
 }
 
 double LyapunovController::getYaw(const geometry_msgs::msg::Quaternion & q)
@@ -139,25 +139,33 @@ geometry_msgs::msg::TwistStamped LyapunovController::computeVelocityCommands(
   if (goal_checker && goal_checker->isGoalReached(current_pose.pose, goal_pose.pose, velocity)) {
     cmd_vel.twist.linear.x = 0.0;
     cmd_vel.twist.angular.z = 0.0;
+    is_rotating_to_goal_ = false;
     return cmd_vel;
   }
 
   // =========================================================================
   // FASE 2: ROTATE-TO-GOAL (In-place rotation ketika sudah di dalam radius goal)
   // =========================================================================
-  if (dist_to_goal <= xy_goal_tolerance_) {
+  // Menggunakan latching: sekali masuk radius goal, kunci mode ini sampai selesai!
+  if (dist_to_goal <= xy_goal_tolerance_ || is_rotating_to_goal_) {
+    is_rotating_to_goal_ = true;
     cmd_vel.twist.linear.x = 0.0;  // KUNCI kecepatan maju agar robot tidak melingkar
 
     if (std::abs(yaw_error) <= yaw_goal_tolerance_) {
       // Sudut sudah sesuai toleransi -> berhenti total
       cmd_vel.twist.angular.z = 0.0;
     } else {
-      // Putar di tempat dengan kontrol proporsional murni
+      // Putar di tempat dengan kontrol proporsional
       double w = k_rotate_ * yaw_error;
 
-      // Berikan kecepatan minimum agar motor tidak stalling / macet karena gesekan
-      if (std::abs(w) < min_vel_theta_) {
-        w = std::copysign(min_vel_theta_, w);
+      // Dynamic minimum velocity agar tidak overshoot saat hampir pas
+      double dynamic_min_vel = min_vel_theta_;
+      if (std::abs(yaw_error) < yaw_goal_tolerance_ * 1.5) {
+        dynamic_min_vel = min_vel_theta_ * 0.5;
+      }
+
+      if (std::abs(w) < dynamic_min_vel) {
+        w = std::copysign(dynamic_min_vel, w);
       }
 
       cmd_vel.twist.angular.z = std::clamp(w, -max_vel_theta_, max_vel_theta_);

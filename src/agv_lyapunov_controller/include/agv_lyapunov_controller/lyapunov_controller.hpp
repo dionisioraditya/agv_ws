@@ -62,10 +62,13 @@ private:
   double desired_linear_vel_{0.3};
 
   // Parameter Rotate-to-Goal (Fase Akhir)
-  double xy_goal_tolerance_{0.20};
-  double yaw_goal_tolerance_{0.15};
+  double xy_goal_tolerance_{0.25};
+  double yaw_goal_tolerance_{0.20};
   double k_rotate_{2.0};
-  double min_vel_theta_{0.2};
+  double min_vel_theta_{0.15};
+
+  // State latching agar tidak flapping antara tracking dan rotasi
+  bool is_rotating_to_goal_{false};
 
   // Helper math
   double getYaw(const geometry_msgs::msg::Quaternion & q);

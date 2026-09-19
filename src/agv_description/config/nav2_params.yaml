@@ -131,13 +131,8 @@ controller_server:
     progress_checker:
       plugin: "nav2_controller::SimpleProgressChecker"
       required_movement_radius: 0.5
-      movement_time_allowance: 10.0
+      movement_time_allowance: 25.0
     # Goal checker parameters
-    #precise_goal_checker:
-    #  plugin: "nav2_controller::SimpleGoalChecker"
-    #  xy_goal_tolerance: 0.25
-    #  yaw_goal_tolerance: 0.25
-    #  stateful: True
     general_goal_checker:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
@@ -145,46 +140,6 @@ controller_server:
       yaw_goal_tolerance: 0.25
     # Lyapunov Controller parameters with Rotate-to-Goal
     FollowPath:
-    #plugin: "dwb_core::DWBLocalPlanner"
-      # debug_trajectory_details: True
-      # min_vel_x: 0.0
-      # min_vel_y: 0.0
-      # max_vel_x: 0.26 #default 0.26
-      # max_vel_y: 0.0
-      # max_vel_theta: 1.0
-      # min_speed_xy: 0.0
-      # max_speed_xy: 0.26 #default 0.26
-      # min_speed_theta: 0.0
-      # # Add high threshold velocity for turtlebot 3 issue.
-      # # https://github.com/ROBOTIS-GIT/turtlebot3_simulations/issues/75
-      # acc_lim_x: 2.5
-      # acc_lim_y: 0.0
-      # acc_lim_theta: 3.2
-      # decel_lim_x: -2.5
-      # decel_lim_y: 0.0
-      # decel_lim_theta: -3.2
-      # vx_samples: 20
-      # vy_samples: 5
-      # vtheta_samples: 20
-      # sim_time: 1.7
-      # linear_granularity: 0.05
-      # angular_granularity: 0.025
-      # transform_tolerance: 0.2
-      # xy_goal_tolerance: 0.25
-      # trans_stopped_velocity: 0.25
-      # short_circuit_trajectory_evaluation: True
-      # stateful: True
-      # critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
-      # BaseObstacle.scale: 0.02
-      # PathAlign.scale: 32.0
-      # PathAlign.forward_point_distance: 0.1
-      # GoalAlign.scale: 24.0
-      # GoalAlign.forward_point_distance: 0.1
-      # PathDist.scale: 32.0
-      # GoalDist.scale: 24.0
-      # RotateToGoal.scale: 32.0
-      # RotateToGoal.slowing_factor: 5.0
-      # RotateToGoal.lookahead_time: -1.0
       plugin: "agv_lyapunov_controller/LyapunovController"
       k_x: 1.5
       k_y: 2.0
@@ -193,10 +148,10 @@ controller_server:
       max_vel_x: 0.5
       max_vel_theta: 1.0
       desired_linear_vel: 0.3
-      xy_goal_tolerance: 0.20
-      yaw_goal_tolerance: 0.15
+      xy_goal_tolerance: 0.25
+      yaw_goal_tolerance: 0.20
       k_rotate: 2.0
-      min_vel_theta: 0.2
+      min_vel_theta: 0.15
 
 local_costmap:
   local_costmap:
