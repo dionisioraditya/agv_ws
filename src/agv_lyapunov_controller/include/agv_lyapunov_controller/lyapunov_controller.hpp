@@ -55,11 +55,17 @@ private:
   // Parameter Kontrol Lyapunov
   double k_x_{1.5};
   double k_y_{2.0};
-  double k_theta_{9};
+  double k_theta_{1.2};
   double lookahead_dist_{0.3};
   double max_vel_x_{0.5};
   double max_vel_theta_{1.0};
   double desired_linear_vel_{0.3};
+
+  // Parameter Rotate-to-Goal (Fase Akhir)
+  double xy_goal_tolerance_{0.20};
+  double yaw_goal_tolerance_{0.15};
+  double k_rotate_{2.0};
+  double min_vel_theta_{0.2};
 
   // Helper math
   double getYaw(const geometry_msgs::msg::Quaternion & q);

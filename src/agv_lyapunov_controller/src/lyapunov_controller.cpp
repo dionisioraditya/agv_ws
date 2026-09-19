@@ -38,6 +38,10 @@ void LyapunovController::configure(
   nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".max_vel_x", rclcpp::ParameterValue(0.5));
   nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".max_vel_theta", rclcpp::ParameterValue(1.0));
   nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".desired_linear_vel", rclcpp::ParameterValue(0.3));
+  nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".xy_goal_tolerance", rclcpp::ParameterValue(0.20));
+  nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".yaw_goal_tolerance", rclcpp::ParameterValue(0.15));
+  nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".k_rotate", rclcpp::ParameterValue(2.0));
+  nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".min_vel_theta", rclcpp::ParameterValue(0.2));
 
   node->get_parameter(plugin_name_ + ".k_x", k_x_);
   node->get_parameter(plugin_name_ + ".k_y", k_y_);
@@ -46,6 +50,10 @@ void LyapunovController::configure(
   node->get_parameter(plugin_name_ + ".max_vel_x", max_vel_x_);
   node->get_parameter(plugin_name_ + ".max_vel_theta", max_vel_theta_);
   node->get_parameter(plugin_name_ + ".desired_linear_vel", desired_linear_vel_);
+  node->get_parameter(plugin_name_ + ".xy_goal_tolerance", xy_goal_tolerance_);
+  node->get_parameter(plugin_name_ + ".yaw_goal_tolerance", yaw_goal_tolerance_);
+  node->get_parameter(plugin_name_ + ".k_rotate", k_rotate_);
+  node->get_parameter(plugin_name_ + ".min_vel_theta", min_vel_theta_);
 }
 
 void LyapunovController::activate()
@@ -83,8 +91,8 @@ double LyapunovController::getYaw(const geometry_msgs::msg::Quaternion & q)
 
 geometry_msgs::msg::TwistStamped LyapunovController::computeVelocityCommands(
   const geometry_msgs::msg::PoseStamped & pose,
-  const geometry_msgs::msg::Twist & /*velocity*/,
-  nav2_core::GoalChecker * /*goal_checker*/)
+  const geometry_msgs::msg::Twist & velocity,
+  nav2_core::GoalChecker * goal_checker)
 {
   geometry_msgs::msg::TwistStamped cmd_vel;
   cmd_vel.header.stamp = pose.header.stamp;
@@ -121,6 +129,46 @@ geometry_msgs::msg::TwistStamped LyapunovController::computeVelocityCommands(
   double ry = current_pose.pose.position.y;
   double r_theta = getYaw(current_pose.pose.orientation);
 
+  // Periksa jarak dan selisih orientasi terhadap goal akhir
+  const auto & goal_pose = global_plan_.poses.back();
+  double dist_to_goal = std::hypot(goal_pose.pose.position.x - rx, goal_pose.pose.position.y - ry);
+  double final_goal_yaw = getYaw(goal_pose.pose.orientation);
+  double yaw_error = angles::normalize_angle(final_goal_yaw - r_theta);
+
+  // Cek jika GoalChecker Nav2 sudah menyatakan goal tercapai
+  if (goal_checker && goal_checker->isGoalReached(current_pose.pose, goal_pose.pose, velocity)) {
+    cmd_vel.twist.linear.x = 0.0;
+    cmd_vel.twist.angular.z = 0.0;
+    return cmd_vel;
+  }
+
+  // =========================================================================
+  // FASE 2: ROTATE-TO-GOAL (In-place rotation ketika sudah di dalam radius goal)
+  // =========================================================================
+  if (dist_to_goal <= xy_goal_tolerance_) {
+    cmd_vel.twist.linear.x = 0.0;  // KUNCI kecepatan maju agar robot tidak melingkar
+
+    if (std::abs(yaw_error) <= yaw_goal_tolerance_) {
+      // Sudut sudah sesuai toleransi -> berhenti total
+      cmd_vel.twist.angular.z = 0.0;
+    } else {
+      // Putar di tempat dengan kontrol proporsional murni
+      double w = k_rotate_ * yaw_error;
+
+      // Berikan kecepatan minimum agar motor tidak stalling / macet karena gesekan
+      if (std::abs(w) < min_vel_theta_) {
+        w = std::copysign(min_vel_theta_, w);
+      }
+
+      cmd_vel.twist.angular.z = std::clamp(w, -max_vel_theta_, max_vel_theta_);
+    }
+    return cmd_vel;
+  }
+
+  // =========================================================================
+  // FASE 1: PATH TRACKING (Lyapunov Control Law mengikuti arah lintasan)
+  // =========================================================================
+
   // 2. Cari titik terdekat pada path terhadap posisi robot
   size_t closest_idx = 0;
   double min_dist = std::numeric_limits<double>::max();
@@ -150,13 +198,19 @@ geometry_msgs::msg::TwistStamped LyapunovController::computeVelocityCommands(
   const auto & target_pose = global_plan_.poses[target_idx];
   double ref_x = target_pose.pose.position.x;
   double ref_y = target_pose.pose.position.y;
-  double ref_theta = getYaw(target_pose.pose.orientation);
+  double ref_theta;
 
-  // Jika waypoint tidak memiliki orientasi valid, orientasikan sesuai arah path
+  // Arah referensi saat tracking adalah arah kurva path (tangent of path)
   if (target_idx + 1 < global_plan_.poses.size()) {
     double dx = global_plan_.poses[target_idx + 1].pose.position.x - ref_x;
     double dy = global_plan_.poses[target_idx + 1].pose.position.y - ref_y;
     ref_theta = std::atan2(dy, dx);
+  } else if (target_idx > 0) {
+    double dx = ref_x - global_plan_.poses[target_idx - 1].pose.position.x;
+    double dy = ref_y - global_plan_.poses[target_idx - 1].pose.position.y;
+    ref_theta = std::atan2(dy, dx);
+  } else {
+    ref_theta = getYaw(target_pose.pose.orientation);
   }
 
   // 4. Hitung Error dalam Robot Frame (Kanayama Transformation)
@@ -167,13 +221,10 @@ geometry_msgs::msg::TwistStamped LyapunovController::computeVelocityCommands(
   double e_y = -std::sin(r_theta) * dx_global + std::cos(r_theta) * dy_global;
   double e_theta = angles::normalize_angle(ref_theta - r_theta);
 
-  // 5. Hitung jarak ke titik akhir untuk perlambatan halus (Ramp down)
-  const auto & goal_pose = global_plan_.poses.back();
-  double dist_to_goal = std::hypot(goal_pose.pose.position.x - rx, goal_pose.pose.position.y - ry);
-
+  // 5. Perlambatan bertahap saat mendekati goal
   double v_ref = desired_linear_vel_;
-  if (dist_to_goal < 0.5) {
-    v_ref = std::max(0.05, desired_linear_vel_ * (dist_to_goal / 0.5));
+  if (dist_to_goal < 0.6) {
+    v_ref = std::max(0.1, desired_linear_vel_ * (dist_to_goal / 0.6));
   }
   double w_ref = 0.0;
 
