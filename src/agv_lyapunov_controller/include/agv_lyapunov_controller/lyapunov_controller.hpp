@@ -55,7 +55,7 @@ private:
   // Parameter Kontrol Lyapunov
   double k_x_{1.5};
   double k_y_{2.0};
-  double k_theta_{2};
+  double k_theta_{5};
   double lookahead_dist_{0.3};
   double max_vel_x_{0.5};
   double max_vel_theta_{1.0};
