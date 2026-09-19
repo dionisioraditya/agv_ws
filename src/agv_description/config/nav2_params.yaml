@@ -149,9 +149,11 @@ controller_server:
       max_vel_theta: 1.0
       desired_linear_vel: 0.3
       xy_goal_tolerance: 0.25
-      yaw_goal_tolerance: 0.20
-      k_rotate: 2.0
-      min_vel_theta: 0.15
+      yaw_goal_tolerance: 0.25
+      k_rotate: 1.5
+      max_rot_vel: 0.45
+      min_vel_theta: 0.18
+      acc_lim_theta: 1.5
 
 local_costmap:
   local_costmap:

@@ -63,12 +63,16 @@ private:
 
   // Parameter Rotate-to-Goal (Fase Akhir)
   double xy_goal_tolerance_{0.25};
-  double yaw_goal_tolerance_{0.20};
-  double k_rotate_{2.0};
-  double min_vel_theta_{0.15};
+  double yaw_goal_tolerance_{0.25};
+  double k_rotate_{1.5};
+  double max_rot_vel_{0.45};
+  double min_vel_theta_{0.18};
+  double acc_lim_theta_{1.5};
 
-  // State latching agar tidak flapping antara tracking dan rotasi
+  // State latching & Acceleration Limiter
   bool is_rotating_to_goal_{false};
+  double last_w_{0.0};
+  rclcpp::Time last_time_{0, 0, RCL_ROS_TIME};
 
   // Helper math
   double getYaw(const geometry_msgs::msg::Quaternion & q);

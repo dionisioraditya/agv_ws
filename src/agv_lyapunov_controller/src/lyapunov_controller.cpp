@@ -38,9 +38,11 @@ void LyapunovController::configure(
   nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".max_vel_x", rclcpp::ParameterValue(0.5));
   nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".max_vel_theta", rclcpp::ParameterValue(1.0));
   nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".xy_goal_tolerance", rclcpp::ParameterValue(0.25));
-  nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".yaw_goal_tolerance", rclcpp::ParameterValue(0.20));
-  nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".k_rotate", rclcpp::ParameterValue(2.0));
-  nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".min_vel_theta", rclcpp::ParameterValue(0.15));
+  nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".yaw_goal_tolerance", rclcpp::ParameterValue(0.25));
+  nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".k_rotate", rclcpp::ParameterValue(1.5));
+  nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".max_rot_vel", rclcpp::ParameterValue(0.45));
+  nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".min_vel_theta", rclcpp::ParameterValue(0.18));
+  nav2_util::declare_parameter_if_not_declared(node, plugin_name_ + ".acc_lim_theta", rclcpp::ParameterValue(1.5));
 
   node->get_parameter(plugin_name_ + ".k_x", k_x_);
   node->get_parameter(plugin_name_ + ".k_y", k_y_);
@@ -52,7 +54,9 @@ void LyapunovController::configure(
   node->get_parameter(plugin_name_ + ".xy_goal_tolerance", xy_goal_tolerance_);
   node->get_parameter(plugin_name_ + ".yaw_goal_tolerance", yaw_goal_tolerance_);
   node->get_parameter(plugin_name_ + ".k_rotate", k_rotate_);
+  node->get_parameter(plugin_name_ + ".max_rot_vel", max_rot_vel_);
   node->get_parameter(plugin_name_ + ".min_vel_theta", min_vel_theta_);
+  node->get_parameter(plugin_name_ + ".acc_lim_theta", acc_lim_theta_);
 }
 
 void LyapunovController::activate()
@@ -78,6 +82,7 @@ void LyapunovController::setPlan(const nav_msgs::msg::Path & path)
 {
   global_plan_ = path;
   is_rotating_to_goal_ = false;  // Reset latching saat rute baru diterima
+  last_w_ = 0.0;
 }
 
 double LyapunovController::getYaw(const geometry_msgs::msg::Quaternion & q)
@@ -140,36 +145,54 @@ geometry_msgs::msg::TwistStamped LyapunovController::computeVelocityCommands(
     cmd_vel.twist.linear.x = 0.0;
     cmd_vel.twist.angular.z = 0.0;
     is_rotating_to_goal_ = false;
+    last_w_ = 0.0;
     return cmd_vel;
   }
 
   // =========================================================================
   // FASE 2: ROTATE-TO-GOAL (In-place rotation ketika sudah di dalam radius goal)
   // =========================================================================
-  // Menggunakan latching: sekali masuk radius goal, kunci mode ini sampai selesai!
   if (dist_to_goal <= xy_goal_tolerance_ || is_rotating_to_goal_) {
     is_rotating_to_goal_ = true;
     cmd_vel.twist.linear.x = 0.0;  // KUNCI kecepatan maju agar robot tidak melingkar
 
-    if (std::abs(yaw_error) <= yaw_goal_tolerance_) {
-      // Sudut sudah sesuai toleransi -> berhenti total
-      cmd_vel.twist.angular.z = 0.0;
-    } else {
-      // Putar di tempat dengan kontrol proporsional
-      double w = k_rotate_ * yaw_error;
-
-      // Dynamic minimum velocity agar tidak overshoot saat hampir pas
-      double dynamic_min_vel = min_vel_theta_;
-      if (std::abs(yaw_error) < yaw_goal_tolerance_ * 1.5) {
-        dynamic_min_vel = min_vel_theta_ * 0.5;
+    // Hitung dt untuk ramp rate limiter
+    rclcpp::Time current_time = pose.header.stamp;
+    double dt = 0.033;
+    if (last_time_.nanoseconds() != 0) {
+      dt = (current_time - last_time_).seconds();
+      if (dt <= 0.0 || dt > 0.5) {
+        dt = 0.033;
       }
-
-      if (std::abs(w) < dynamic_min_vel) {
-        w = std::copysign(dynamic_min_vel, w);
-      }
-
-      cmd_vel.twist.angular.z = std::clamp(w, -max_vel_theta_, max_vel_theta_);
     }
+    last_time_ = current_time;
+
+    // 1. Cek apakah sudut sudah sesuai toleransi
+    if (std::abs(yaw_error) <= yaw_goal_tolerance_) {
+      cmd_vel.twist.angular.z = 0.0;
+      last_w_ = 0.0;
+      return cmd_vel;
+    }
+
+    // 2. Hitung target kecepatan putar dengan batas maksimum halus (max_rot_vel_)
+    double target_w = k_rotate_ * yaw_error;
+    target_w = std::clamp(target_w, -max_rot_vel_, max_rot_vel_);
+
+    // Terapkan min_vel_theta_ agar motor tidak macet karena gesekan lantai
+    if (std::abs(target_w) < min_vel_theta_) {
+      target_w = std::copysign(min_vel_theta_, target_w);
+    }
+
+    // 3. Acceleration / Deceleration Limiter (seperti acc_lim_theta & decel_lim_theta di DWB)
+    // Mencegah hentakan mendadak yang membuat inersia 20kg bablas/overshoot
+    double max_dw = acc_lim_theta_ * dt;
+    double dw = target_w - last_w_;
+    dw = std::clamp(dw, -max_dw, max_dw);
+
+    double final_w = last_w_ + dw;
+    last_w_ = final_w;
+
+    cmd_vel.twist.angular.z = final_w;
     return cmd_vel;
   }
 
