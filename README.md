@@ -1,7 +1,7 @@
 <h1 align="center">🌐 Robotic UAJY – Autonomous Mobile Robot (AMR) / AGV Workspace</h1>
 
 <p align="center">
-  Repository ini berisi <b>source code</b>, model 3D CAD/URDF terbaru (Fusion 360), dan konfigurasi <b>Robot AMR/AGV</b> yang dikembangkan menggunakan <b>ROS 2 Humble</b>.<br>
+  Repository ini berisi <b>source code</b>, model 3D CAD/URDF (Fusion 360), dan konfigurasi <b>Robot AMR/AGV</b> yang dikembangkan menggunakan <b>ROS 2 Humble</b>.<br>
   Mendukung penuh <b>Simulasi Gazebo Classic</b> dan <b>Robot Fisik (Real-World)</b> dengan <b>SLAM Toolbox</b>, <b>Nav2</b>, serta <b>Custom Planners</b>.
 </p>
 
@@ -20,11 +20,11 @@
 | Komponen | Spesifikasi / Deskripsi |
 |:---|:---|
 | **ROS Distribution** | ROS 2 Humble Hawksbill (Ubuntu 22.04 LTS) |
-| **SBC (Robot Fisik)** | NVIDIA Jetson Orin Nano / Jetson Series |
+| **SBC (Robot Fisik)** | NVIDIA Jetson Orin Nano Super Dev Kit |
 | **LiDAR Scanner** | RPLIDAR A2M8 (360° Laser Scan) |
-| **Depth Camera** | Orbbec Astra Pro Plus / Intel RealSense |
-| **IMU Sensor** | Bosch BNO055 (9-DOF IMU) |
-| **Motor Controller** | Custom Serial MCU (`/dev/ttyACM0`) dengan Encoder Odometry |
+| **Depth Camera** | Orbbec Astra Pro Plus |
+| **IMU Sensor** | DFRobot BNO055 (9-DOF IMU) |
+| **Motor Controller** | Custom Serial MCU (`/dev/ttyACM0`) dengan Encoder |
 
 ---
 
