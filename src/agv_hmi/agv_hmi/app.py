@@ -26,9 +26,9 @@ def main(args=None):
     ros_worker = RosWorker()
     ros_worker.start()
 
-    # Create and display Main Window
+    # Create and display Main Window in Fullscreen by default (1024x600 target)
     window = MainWindow(storage, ros_worker)
-    window.show()
+    window.showFullScreen()
 
     # Qt Event Loop
     exit_code = app.exec_()

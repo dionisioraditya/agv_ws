@@ -152,14 +152,14 @@ class SettingsPage(QWidget):
 
     def _init_ui(self):
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(20, 20, 20, 20)
-        layout.setSpacing(14)
+        layout.setContentsMargins(14, 10, 14, 10)
+        layout.setSpacing(10)
 
         # ----------------- 1. HEADER CARD -----------------
         header_card = QFrame()
         header_card.setObjectName("HeaderCard")
         header_layout = QHBoxLayout(header_card)
-        header_layout.setContentsMargins(16, 12, 16, 12)
+        header_layout.setContentsMargins(14, 8, 14, 8)
 
         left_header = QVBoxLayout()
         title_label = QLabel("MANAJEMEN POINT")

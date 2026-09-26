@@ -28,14 +28,14 @@ class DashboardPage(QWidget):
 
     def _init_ui(self):
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(20, 20, 20, 20)
-        layout.setSpacing(16)
+        layout.setContentsMargins(16, 12, 16, 12)
+        layout.setSpacing(10)
 
         # ----------------- 1. HEADER CARD (Telemetry & FSM State) -----------------
         header_card = QFrame()
         header_card.setObjectName("HeaderCard")
         header_layout = QHBoxLayout(header_card)
-        header_layout.setContentsMargins(16, 12, 16, 12)
+        header_layout.setContentsMargins(16, 10, 16, 10)
 
         # Left Header: App Title & Mission Info
         left_header = QVBoxLayout()

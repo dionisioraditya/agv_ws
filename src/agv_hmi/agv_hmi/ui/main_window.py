@@ -21,8 +21,9 @@ class MainWindow(QMainWindow):
         self.ros_worker = ros_worker
 
         self.setWindowTitle("AGV Mission Manager & Waypoint HMI")
-        self.resize(1120, 740)
-        self.setMinimumSize(900, 600)
+        # Locked target resolution: 1024 x 600
+        self.resize(1024, 600)
+        self.setMinimumSize(1024, 600)
 
         # Ensure native window decorations have minimize, maximize, and close
         self.setWindowFlags(
@@ -104,15 +105,18 @@ class MainWindow(QMainWindow):
         self.settings_page.waypoints_modified.connect(self.dashboard_page.refresh_waypoints_bank)
 
     def toggle_fullscreen(self):
-        """Toggle between Fullscreen and Normal Windowed mode."""
+        """Toggle between Fullscreen and locked 1024x600 Windowed mode."""
         if self.isFullScreen():
             self.showNormal()
+            self.setFixedSize(1024, 600)
             self.btn_fullscreen.setText("⛶")
             self.btn_fullscreen.setToolTip("Layar Penuh / Fullscreen (F11)")
         else:
+            self.setMaximumSize(16777215, 16777215)
+            self.setMinimumSize(0, 0)
             self.showFullScreen()
             self.btn_fullscreen.setText("🗗")
-            self.btn_fullscreen.setToolTip("Keluar Fullscreen / Mode Jendela (F11 / Esc)")
+            self.btn_fullscreen.setToolTip("Keluar Fullscreen / Mode Jendela 1024x600 (F11 / Esc)")
 
     def changeEvent(self, event):
         """Detect window state changes (maximize/fullscreen/restore)."""
