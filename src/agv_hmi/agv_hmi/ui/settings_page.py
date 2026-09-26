@@ -65,9 +65,10 @@ class ResponsiveDpadWidget(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.setMinimumSize(160, 160)
         self.grid = QGridLayout(self)
         self.grid.setContentsMargins(0, 0, 0, 0)
-        self.grid.setSpacing(8)
+        self.grid.setSpacing(6)
         self.grid.setAlignment(Qt.AlignCenter)
 
         self.btn_jog_fwd = QPushButton("▲\nMAJU\n[W]")
@@ -104,15 +105,31 @@ class ResponsiveDpadWidget(QWidget):
         self.grid.addWidget(self.btn_jog_right, 1, 2)
         self.grid.addWidget(self.btn_jog_back, 2, 1)
 
+    def set_active_direction(self, direction: Optional[str]):
+        """Highlight active direction button ('fwd', 'back', 'left', 'right', 'stop' or None)."""
+        mapping = {
+            'fwd': self.btn_jog_fwd,
+            'back': self.btn_jog_back,
+            'left': self.btn_jog_left,
+            'right': self.btn_jog_right,
+            'stop': self.btn_jog_stop,
+        }
+        for key, btn in mapping.items():
+            is_active = (key == direction)
+            btn.setProperty("active", is_active)
+            btn.style().unpolish(btn)
+            btn.style().polish(btn)
+
     def resizeEvent(self, event):
         super().resizeEvent(event)
         w = self.width()
         h = self.height()
-        side = min(w, h)
         spacing = self.grid.spacing()
-        # Scale between 55px and 120px depending on screen/panel space
-        btn_size = max(55, min(120, int((side - 2 * spacing) / 3)))
-        font_pt = max(9, min(13, int(btn_size * 0.13)))
+        # Compute maximum button size bounded by available height and width to prevent collision
+        max_btn_w = (w - 2 * spacing - 12) / 3
+        max_btn_h = (h - 2 * spacing - 12) / 3
+        btn_size = int(max(36, min(max_btn_w, max_btn_h, 75)))
+        font_pt = max(8, min(11, int(btn_size * 0.16)))
 
         for btn in self.buttons:
             btn.setFixedSize(btn_size, btn_size)
@@ -133,10 +150,9 @@ class SettingsPage(QWidget):
         self.ros_worker = ros_worker
         self.latest_pose = None
 
-        # Teleop state
+        # Teleop state (Latching mode: single press drives continuously)
         self.current_vx = 0.0
         self.current_wz = 0.0
-        self.pressed_keys: Set[int] = set()
 
         # Timer for continuous jog publishing (20 Hz)
         self.jog_timer = QTimer(self)
@@ -250,8 +266,8 @@ class SettingsPage(QWidget):
         teleop_card = QFrame()
         teleop_card.setObjectName("Card")
         teleop_layout = QVBoxLayout(teleop_card)
-        teleop_layout.setContentsMargins(14, 14, 14, 14)
-        teleop_layout.setSpacing(12)
+        teleop_layout.setContentsMargins(12, 10, 12, 10)
+        teleop_layout.setSpacing(6)
 
         teleop_title = QLabel("MANUAL JOGGING / TELEOP")
         teleop_title.setObjectName("SectionLabel")
@@ -259,43 +275,46 @@ class SettingsPage(QWidget):
 
         # Pose monitor feedback inside teleop panel
         pose_box = QFrame()
-        pose_box.setStyleSheet("background-color: #191a2a; border-radius: 8px; padding: 6px;")
+        pose_box.setStyleSheet("background-color: #191a2a; border-radius: 6px; padding: 4px;")
         pose_box_layout = QVBoxLayout(pose_box)
-        pose_box_layout.setContentsMargins(8, 6, 8, 6)
+        pose_box_layout.setContentsMargins(6, 4, 6, 4)
         pose_box_layout.setSpacing(2)
 
         p_lbl = QLabel("Posisi Robot Saat Ini (TF):")
         p_lbl.setObjectName("SubtitleLabel")
         self.pose_feedback_lbl = QLabel("Membaca koordinat robot...")
         self.pose_feedback_lbl.setObjectName("ValueLabel")
-        self.pose_feedback_lbl.setStyleSheet("font-size: 13px; color: #38bdf8;")
+        self.pose_feedback_lbl.setStyleSheet("font-size: 12px; color: #38bdf8;")
         pose_box_layout.addWidget(p_lbl)
         pose_box_layout.addWidget(self.pose_feedback_lbl)
         teleop_layout.addWidget(pose_box)
 
-        # Speed adjustment controls
-        speed_layout = QGridLayout()
-        speed_layout.setSpacing(6)
+        # Speed adjustment controls (compact 1-row layout)
+        speed_layout = QHBoxLayout()
+        speed_layout.setContentsMargins(0, 0, 0, 0)
+        speed_layout.setSpacing(8)
 
-        lbl_lin = QLabel("Linear (m/s):")
+        lbl_lin = QLabel("Lin (m/s):")
         lbl_lin.setObjectName("SubtitleLabel")
         self.spin_linear = QDoubleSpinBox()
         self.spin_linear.setRange(0.05, 1.0)
         self.spin_linear.setSingleStep(0.05)
         self.spin_linear.setValue(0.35)
-        self.spin_linear.setStyleSheet("background-color: #181928; color: #fff; padding: 4px;")
-        speed_layout.addWidget(lbl_lin, 0, 0)
-        speed_layout.addWidget(self.spin_linear, 0, 1)
+        self.spin_linear.setStyleSheet("background-color: #181928; color: #fff; padding: 3px;")
+        self.spin_linear.valueChanged.connect(self._on_linear_speed_changed)
+        speed_layout.addWidget(lbl_lin)
+        speed_layout.addWidget(self.spin_linear)
 
-        lbl_ang = QLabel("Angular (rad/s):")
+        lbl_ang = QLabel("Ang (rad/s):")
         lbl_ang.setObjectName("SubtitleLabel")
         self.spin_angular = QDoubleSpinBox()
         self.spin_angular.setRange(0.1, 2.5)
         self.spin_angular.setSingleStep(0.1)
         self.spin_angular.setValue(0.8)
-        self.spin_angular.setStyleSheet("background-color: #181928; color: #fff; padding: 4px;")
-        speed_layout.addWidget(lbl_ang, 1, 0)
-        speed_layout.addWidget(self.spin_angular, 1, 1)
+        self.spin_angular.setStyleSheet("background-color: #181928; color: #fff; padding: 3px;")
+        self.spin_angular.valueChanged.connect(self._on_angular_speed_changed)
+        speed_layout.addWidget(lbl_ang)
+        speed_layout.addWidget(self.spin_angular)
 
         teleop_layout.addLayout(speed_layout)
 
@@ -307,26 +326,24 @@ class SettingsPage(QWidget):
         self.btn_jog_right = self.dpad_container.btn_jog_right
         self.btn_jog_back = self.dpad_container.btn_jog_back
 
-        self.btn_jog_fwd.pressed.connect(self._on_fwd_pressed)
-        self.btn_jog_fwd.released.connect(self._on_jog_released)
-        self.btn_jog_left.pressed.connect(self._on_left_pressed)
-        self.btn_jog_left.released.connect(self._on_jog_released)
+        self.btn_jog_fwd.clicked.connect(self._on_fwd_clicked)
+        self.btn_jog_back.clicked.connect(self._on_back_clicked_jog)
+        self.btn_jog_left.clicked.connect(self._on_left_clicked)
+        self.btn_jog_right.clicked.connect(self._on_right_clicked)
         self.btn_jog_stop.clicked.connect(self._emergency_stop_jog)
-        self.btn_jog_right.pressed.connect(self._on_right_pressed)
-        self.btn_jog_right.released.connect(self._on_jog_released)
-        self.btn_jog_back.pressed.connect(self._on_back_pressed)
-        self.btn_jog_back.released.connect(self._on_jog_released)
 
         teleop_layout.addWidget(self.dpad_container, stretch=1)
 
         # Keyboard control active notice
-        self.chk_keyboard = QCheckBox("Aktifkan Kontrol Keyboard (W/A/S/D)")
+        self.chk_keyboard = QCheckBox("Kontrol Keyboard Aktif (W/A/S/D)")
         self.chk_keyboard.setChecked(True)
         self.chk_keyboard.setStyleSheet("color: #a5b4fc; font-weight: bold;")
+        self.chk_keyboard.toggled.connect(self._on_keyboard_checkbox_toggled)
         teleop_layout.addWidget(self.chk_keyboard)
 
-        tip_lbl = QLabel("Tahan tombol mouse atau tombol keyboard untuk menggerakkan robot.")
+        tip_lbl = QLabel("Pencet tombol 1x untuk jalan terus, [Spasi]/STOP untuk berhenti.")
         tip_lbl.setObjectName("SubtitleLabel")
+        tip_lbl.setStyleSheet("font-size: 11px; color: #94a3b8;")
         tip_lbl.setWordWrap(True)
         teleop_layout.addWidget(tip_lbl)
 
@@ -350,38 +367,56 @@ class SettingsPage(QWidget):
 
     # ------------------- Manual Jogging Slots -------------------
 
-    def _on_fwd_pressed(self):
-        self._start_jog(self.spin_linear.value(), 0.0)
+    def _on_fwd_clicked(self):
+        self._set_motion_target(self.spin_linear.value(), 0.0, 'fwd')
 
-    def _on_back_pressed(self):
-        self._start_jog(-self.spin_linear.value(), 0.0)
+    def _on_back_clicked_jog(self):
+        self._set_motion_target(-self.spin_linear.value(), 0.0, 'back')
 
-    def _on_left_pressed(self):
-        self._start_jog(0.0, self.spin_angular.value())
+    def _on_left_clicked(self):
+        self._set_motion_target(0.0, self.spin_angular.value(), 'left')
 
-    def _on_right_pressed(self):
-        self._start_jog(0.0, -self.spin_angular.value())
+    def _on_right_clicked(self):
+        self._set_motion_target(0.0, -self.spin_angular.value(), 'right')
 
-    def _on_jog_released(self):
-        if not self.pressed_keys:
+    def _on_linear_speed_changed(self, val: float):
+        if self.current_vx > 0:
+            self.current_vx = val
+        elif self.current_vx < 0:
+            self.current_vx = -val
+
+    def _on_angular_speed_changed(self, val: float):
+        if self.current_wz > 0:
+            self.current_wz = val
+        elif self.current_wz < 0:
+            self.current_wz = -val
+
+    def _on_keyboard_checkbox_toggled(self, checked: bool):
+        if not checked:
             self._emergency_stop_jog()
 
-    def _start_jog(self, vx: float, wz: float):
+    def _set_motion_target(self, vx: float, wz: float, direction: str):
+        """Set target velocity, update active UI highlight, and ensure continuous 20 Hz publishing."""
         self.current_vx = vx
         self.current_wz = wz
+        self.dpad_container.set_active_direction(direction)
         self._send_cmd(vx, wz)
         if not self.jog_timer.isActive():
-            self.jog_timer.start()
+            self.jog_timer.start(50)  # 20 Hz continuous publishing
 
     def _on_jog_timer_tick(self):
+        """Continuously publish active velocity every 50ms (20 Hz) to prevent twist_mux timeout."""
         self._send_cmd(self.current_vx, self.current_wz)
 
     def _emergency_stop_jog(self):
+        """Halt robot immediately: stop publish timer and send zero velocity command."""
         self.jog_timer.stop()
         self.current_vx = 0.0
         self.current_wz = 0.0
-        self.pressed_keys.clear()
-        self._send_cmd(0.0, 0.0)
+        self.dpad_container.set_active_direction('stop')
+        for _ in range(3):
+            self._send_cmd(0.0, 0.0)
+        QTimer.singleShot(150, lambda: self.dpad_container.set_active_direction(None))
 
     def _send_cmd(self, vx: float, wz: float):
         if self.ros_worker:
@@ -395,49 +430,47 @@ class SettingsPage(QWidget):
             return
 
         key = event.key()
-        if key in (Qt.Key_W, Qt.Key_S, Qt.Key_A, Qt.Key_D, Qt.Key_Space):
-            self.pressed_keys.add(key)
-            self._update_keyboard_velocity()
+
+        # Motion keys (latching: single press drives continuously until stopped)
+        if key in (Qt.Key_W, Qt.Key_Up):
+            self._set_motion_target(self.spin_linear.value(), 0.0, 'fwd')
+            event.accept()
+        elif key in (Qt.Key_S, Qt.Key_Down):
+            self._set_motion_target(-self.spin_linear.value(), 0.0, 'back')
+            event.accept()
+        elif key in (Qt.Key_A, Qt.Key_Left):
+            self._set_motion_target(0.0, self.spin_angular.value(), 'left')
+            event.accept()
+        elif key in (Qt.Key_D, Qt.Key_Right):
+            self._set_motion_target(0.0, -self.spin_angular.value(), 'right')
+            event.accept()
+        elif key in (Qt.Key_Space, Qt.Key_X):
+            self._emergency_stop_jog()
+            event.accept()
+        # Speed adjustments hotkeys (matching keyboard_teleop node)
+        elif key == Qt.Key_Q:
+            self.spin_linear.setValue(min(1.0, round(self.spin_linear.value() + 0.05, 2)))
+            event.accept()
+        elif key == Qt.Key_Z:
+            self.spin_linear.setValue(max(0.05, round(self.spin_linear.value() - 0.05, 2)))
+            event.accept()
+        elif key == Qt.Key_E:
+            self.spin_angular.setValue(min(2.5, round(self.spin_angular.value() + 0.1, 2)))
+            event.accept()
+        elif key == Qt.Key_C:
+            self.spin_angular.setValue(max(0.1, round(self.spin_angular.value() - 0.1, 2)))
             event.accept()
         else:
             super().keyPressEvent(event)
 
     def keyReleaseEvent(self, event):
-        if not self.chk_keyboard.isChecked() or event.isAutoRepeat():
-            super().keyReleaseEvent(event)
-            return
+        # In latching teleop mode, key release does NOT halt motion.
+        # Motion continues until [Space], [X], or STOP button is clicked.
+        super().keyReleaseEvent(event)
 
-        key = event.key()
-        if key in self.pressed_keys:
-            self.pressed_keys.discard(key)
-            self._update_keyboard_velocity()
-            event.accept()
-        else:
-            super().keyReleaseEvent(event)
-
-    def _update_keyboard_velocity(self):
-        if Qt.Key_Space in self.pressed_keys:
-            self._emergency_stop_jog()
-            return
-
-        vx = 0.0
-        wz = 0.0
-        lin_speed = self.spin_linear.value()
-        ang_speed = self.spin_angular.value()
-
-        if Qt.Key_W in self.pressed_keys:
-            vx += lin_speed
-        if Qt.Key_S in self.pressed_keys:
-            vx -= lin_speed
-        if Qt.Key_A in self.pressed_keys:
-            wz += ang_speed
-        if Qt.Key_D in self.pressed_keys:
-            wz -= ang_speed
-
-        if vx == 0.0 and wz == 0.0:
-            self._emergency_stop_jog()
-        else:
-            self._start_jog(vx, wz)
+    def hideEvent(self, event):
+        super().hideEvent(event)
+        self._emergency_stop_jog()
 
     def _on_back_clicked(self):
         self._emergency_stop_jog()

@@ -218,7 +218,7 @@ QPushButton#DPadButton:hover {
     color: #ffffff;
 }
 
-QPushButton#DPadButton:pressed {
+QPushButton#DPadButton:pressed, QPushButton#DPadButton[active="true"] {
     background-color: #0284c7;
     border-color: #38bdf8;
     color: #ffffff;
@@ -237,8 +237,9 @@ QPushButton#StopJogButton:hover {
     background-color: #dc2626;
 }
 
-QPushButton#StopJogButton:pressed {
+QPushButton#StopJogButton:pressed, QPushButton#StopJogButton[active="true"] {
     background-color: #7f1d1d;
+    border-color: #fca5a5;
 }
 
 /* Primary Action Button */
